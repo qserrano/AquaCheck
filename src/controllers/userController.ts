@@ -1,77 +1,67 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as userModel from '../models/user';
+import { CreateUserInput, UpdateUserInput } from '../validations/userValidation';
 import { User } from '../models/user';
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const users = await userModel.getUsers();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching users' });
+    next(error);
   }
 };
 
-export const getUser = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = req.params.id; // Ya validado por Zod
   try {
-    const user = await userModel.getUserById(id);
+    const user = await userModel.getUserById(Number(id));
     if (user) {
       res.status(200).json(user);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching user' });
+    next(error);
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
-  const { user_name, user_password, user_email } = req.body;
-  
-  if (!user_name || !user_password || !user_email) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
+export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const newUser: User = { user_name, user_password, user_email };
-    const createdUser = await userModel.createUser(newUser);
+    const userData: CreateUserInput = req.body; // Ya validado por Zod
+    const createdUser = await userModel.createUser(userData);
     res.status(201).json(createdUser);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating user' });
+    next(error);
   }
 };
 
-export const updateUser = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { user_name, user_password, user_email } = req.body;
-  
-  if (!user_name || !user_password || !user_email) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
+export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = req.params.id; // Ya validado por Zod
   try {
-    const user: User = { user_name, user_password, user_email };
-    const updatedUser = await userModel.updateUser(id, user);
+    const userData: UpdateUserInput = req.body; // Ya validado por Zod
+    const updatedUser = await userModel.updateUser(Number(id), userData as User);
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Error updating user' });
+    next(error);
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const id = req.params.id; // Ya validado por Zod
   try {
-    const user = await userModel.getUserById(id);
+    const user = await userModel.getUserById(Number(id));
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'User not found' });
+      return;
     }
-    await userModel.deleteUser(id);
+    await userModel.deleteUser(Number(id));
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting user' });
+    next(error);
   }
 };

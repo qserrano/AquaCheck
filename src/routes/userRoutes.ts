@@ -8,14 +8,13 @@ import {
 } from '../controllers/userController';
 import { validate } from '../middlewares/validate';
 import { createUserSchema, updateUserSchema, userIdSchema } from '../validations/userValidation';
-import { asyncHandler } from '../middlewares/asyncHandler';
 
 const router = express.Router();
 
 router.get('/', getAllUsers);
-router.get('/:id', validate(userIdSchema), getUser);
-router.post('/', validate(createUserSchema), createUser);
-router.put('/:id', validate({ ...userIdSchema, ...updateUserSchema }), updateUser);
-router.delete('/:id', validate(userIdSchema), deleteUser);
+router.get('/:id', validate({ params: userIdSchema }), getUser);
+router.post('/', validate({ body: createUserSchema }), createUser);
+router.put('/:id', validate({ params: userIdSchema, body: updateUserSchema }), updateUser);
+router.delete('/:id', validate({ params: userIdSchema }), deleteUser);
 
 export default router;

@@ -1,4 +1,5 @@
 import pool from '../db/db';
+import { CreateUserInput, UpdateUserInput } from '../validations/userValidation';
 
 export interface User {
   id?: number;
@@ -8,7 +9,7 @@ export interface User {
   created_at?: Date;
 }
 
-export const createUser = async (user: User): Promise<User> => {
+export const createUser = async (user: CreateUserInput): Promise<User> => {
   const { user_name, user_password, user_email } = user;
   const result = await pool.query(
     'INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3) RETURNING *',

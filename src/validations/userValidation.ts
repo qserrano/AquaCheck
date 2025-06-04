@@ -21,7 +21,9 @@ export const updateUserSchema = userSchema.partial().refine(data => {
 }, { message: "Debe proporcionar al menos un campo para actualizar" });
 
 // Esquema para ID de usuario
-export const userIdSchema = z.number().int().positive();
+export const userIdSchema = z.object({
+  id: z.string().regex(/^[0-9]+$/).transform(Number)
+});
 
 // Tipo inferido para TypeScript
 export type CreateUserInput = z.infer<typeof createUserSchema>;
