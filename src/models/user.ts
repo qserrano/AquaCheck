@@ -1,4 +1,5 @@
 import pool from '../db/db';
+import { hashPassword } from '../utils/auth';
 import { CreateUserInput, UpdateUserInput } from '../validations/userValidation';
 
 export interface User {
@@ -11,11 +12,18 @@ export interface User {
 
 export const createUser = async (user: CreateUserInput): Promise<User> => {
   const { user_name, user_password, user_email } = user;
+  const hashedPassword = await hashPassword(user_password);
+  
   const result = await pool.query(
     'INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3) RETURNING *',
-    [user_name, user_password, user_email]
+    [user_name, hashedPassword, user_email]
   );
   return result.rows[0];
+};
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  const result = await pool.query('SELECT * FROM users WHERE user_email = $1', [email]);
+  return result.rows[0] || null;
 };
 
 export const getUsers = async (): Promise<User[]> => {
@@ -30,9 +38,10 @@ export const getUserById = async (id: number): Promise<User | null> => {
 
 export const updateUser = async (id: number, user: User): Promise<User | null> => {
   const { user_name, user_password, user_email } = user;
+  const hashedPassword = await hashPassword(user_password);
   const result = await pool.query(
     'UPDATE users SET user_name = $1, user_password = $2, user_email = $3 WHERE id = $4 RETURNING *',
-    [user_name, user_password, user_email, id]
+    [user_name, hashedPassword, user_email, id]
   );
   return result.rows[0] || null;
 };

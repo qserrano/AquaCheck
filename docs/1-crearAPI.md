@@ -373,11 +373,3 @@ Puedes probar los endpoints con Postman o cURL:
   ```bash
   curl -X DELETE http://localhost:3000/api/users/1
   ```
-
-## Paso 14: Mejoras adicionales (opcionales)
-
-1. **Validación de datos**: Usar una librería como Joi o Zod para validar los datos de entrada.
-2. **Autenticación**: Implementar JWT para proteger los endpoints.
-3. **Hashing de contraseñas**: Usar bcrypt para no almacenar contraseñas en texto plano.
-4. **Logging**: Añadir un sistema de logs con Winston o Morgan.
-5. **Testing**: Configurar pruebas unitarias e integración con Jest o Mocha.
