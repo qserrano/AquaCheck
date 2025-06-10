@@ -2,11 +2,17 @@ import { z } from 'zod';
 
 // Esquema base para usuario
 const userSchema = z.object({
+  user_username: z.string()
+    .min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres" })
+    .max(50, { message: "El nombre de usuario no puede exceder los 50 caracteres" }),
   user_name: z.string()
     .min(3, { message: "El nombre debe tener al menos 3 caracteres" })
     .max(50, { message: "El nombre no puede exceder los 50 caracteres" }),
-  user_email: z.string()
-    .email({ message: "Debe ser un email válido" }),
+  user_surname: z.string()
+    .min(3, { message: "Los apellidos deben tener al menos 3 caracteres" })
+    .max(100, { message: "Los apellidos no pueden exceder los 100 caracteres" }),
+  user_dni: z.string()
+    .regex(/^[0-9]{8}[A-Za-z]{1}$/, { message: "El DNI debe tener 8 números y 1 letra" }),
   user_password: z.string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
     .max(100, { message: "La contraseña no puede exceder los 100 caracteres" })

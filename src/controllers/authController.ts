@@ -4,14 +4,14 @@ import { comparePasswords, generateToken } from '../utils/auth';
 import { z } from 'zod';
 
 const loginSchema = z.object({
-  user_email: z.string().email(),
+  user_username: z.string().min(3),
   user_password: z.string().min(6)
 });
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { user_email, user_password } = loginSchema.parse(req.body);
-    const user = await userModel.getUserByEmail(user_email);
+    const { user_username, user_password } = loginSchema.parse(req.body);
+    const user = await userModel.getUserByUsername(user_username);
 
     if (!user || !(await comparePasswords(user_password, user.user_password))) {
       res.status(401).json({ message: 'Credenciales inválidas' });
@@ -27,8 +27,10 @@ export const login = async (req: Request, res: Response) => {
     
     res.status(200).json({
       id: user.id,
+      user_username: user.user_username,
       user_name: user.user_name,
-      user_email: user.user_email,
+      user_surname: user.user_surname,
+      user_role: user.user_role,
       token
     });
   } catch (error) {
