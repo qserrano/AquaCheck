@@ -10,16 +10,17 @@ export interface User {
   user_name: string;
   user_surname: string;
   user_dni: string;
+  user_email: string;
   created_at?: Date;
 }
 
 export const createUser = async (user: CreateUserInput): Promise<User> => {
-  const { user_username, user_password, user_name, user_surname, user_dni } = user;
+  const { user_username, user_password, user_name, user_surname, user_dni, user_email } = user;
   const hashedPassword = await hashPassword(user_password);
   
   const result = await pool.query(
-    'INSERT INTO users (user_username, user_password, user_role, user_name, user_surname, user_dni) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    [user_username, hashedPassword, 'user', user_name, user_surname, user_dni]
+    'INSERT INTO users (user_username, user_password, user_role, user_name, user_surname, user_dni, user_email, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING *',
+    [user_username, hashedPassword, 'admin', user_name, user_surname, user_dni, user_email]
   );
   return result.rows[0];
 };

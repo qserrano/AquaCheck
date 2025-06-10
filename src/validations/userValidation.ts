@@ -13,6 +13,8 @@ const userSchema = z.object({
     .max(100, { message: "Los apellidos no pueden exceder los 100 caracteres" }),
   user_dni: z.string()
     .regex(/^[0-9]{8}[A-Za-z]{1}$/, { message: "El DNI debe tener 8 números y 1 letra" }),
+  user_email: z.string()
+    .email({ message: "El email debe tener un formato válido" }),
   user_password: z.string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
     .max(100, { message: "La contraseña no puede exceder los 100 caracteres" })
