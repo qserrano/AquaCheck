@@ -1,12 +1,4 @@
-:root {
-    --color-primario: #2B4257;
-    --color-secundario: #8CA3B7;
-    --color-terciario: #D6E1E9;
-    --color-neutro: #F5F7F9;
-    --color-acento: #E67E22;
-    --fuente-titulos: 'Space Grotesk', sans-serif;
-    --fuente-texto: 'Inter', sans-serif;
-}
+@import 'variables.css';
 
 * {
     margin: 0;
