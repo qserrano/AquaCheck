@@ -1,6 +1,18 @@
 @import 'variables.css';
 @import 'styles.css';
 
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: var(--fuente-texto);
+    background-image: url('../images/background-inicio.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
 
 .login-container {
     background-color: white;
