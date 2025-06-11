@@ -16,18 +16,34 @@ body {
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.logo {
+    width: auto;
+    height: 50px;
+    position: absolute;
+    left: 6rem;
 }
 
 .app-title {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
-    color: var(--color-primario);
+    color: var(--color-acento);
     margin: 0;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .user-info {
+    position: absolute;
+    right: 2rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -48,7 +64,35 @@ body {
 }
 
 .main-content {
-    padding: 2rem;
+    margin-left: 250px;
+    padding: 20px;
     color: var(--color-neutro);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: var(--color-primario);
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 80px;
+    color: white;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 15px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sidebar-menu li:hover {
+    background-color: #2a2a2a;
 } 

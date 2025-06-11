@@ -8,31 +8,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style-options.css">
+    <script src="/assets/js/options.js" defer></script>
 </head>
 <body>
     <nav class="navbar">
+        <img src="/assets/images/logo-aquacheck.png" alt="AquaCheck" class="logo">
         <h1 class="app-title">AquaCheck</h1>
         <div class="user-info">
             <p class="user-name" id="userName"></p>
             <p class="user-role" id="userRole"></p>
         </div>
     </nav>
+
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li onclick="navegarA('nuevo-analisis')">Nuevo análisis</li>
+            <li onclick="navegarA('ver-analisis')">Ver análisis</li>
+            <li onclick="navegarA('gestion-usuarios')">Gestión de usuarios</li>
+            <li onclick="navegarA('mantenimiento')">Mantenimiento</li>
+            <li onclick="navegarA('informes')">Informes</li>
+            <li onclick="cerrarSesion()">Cerrar sesión</li>
+        </ul>
+    </div>
+
     <div class="main-content">
         <!-- Aquí irá el contenido principal de la página -->
     </div>
-
-    <script>
-        // Obtener la información del usuario del localStorage
-        document.addEventListener('DOMContentLoaded', function() {
-            const userData = JSON.parse(localStorage.getItem('userData'));
-            if (userData && userData.token) {
-                document.getElementById('userName').textContent = userData.username;
-                document.getElementById('userRole').textContent = userData.role;
-            } else {
-                // Si no hay datos del usuario o no hay token, redirigir al login
-                window.location.href = '/login.html';
-            }
-        });
-    </script>
 </body>
 </html> 
