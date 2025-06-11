@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaCheck - Panel de Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style-options.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="app-title">AquaCheck</h1>
+        <div class="user-info">
+            <p class="user-name" id="userName"></p>
+            <p class="user-role" id="userRole"></p>
+        </div>
+    </nav>
+    <div class="main-content">
+        <!-- Aquí irá el contenido principal de la página -->
+    </div>
+
+    <script>
+        // Obtener la información del usuario del localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData && userData.token) {
+                document.getElementById('userName').textContent = userData.username;
+                document.getElementById('userRole').textContent = userData.role;
+            } else {
+                // Si no hay datos del usuario o no hay token, redirigir al login
+                window.location.href = '/login.html';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -54,7 +54,16 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = '/success.html';
+                    const data = await response.json();
+                    // Guardar los datos del usuario y el token en localStorage
+                    localStorage.setItem('userData', JSON.stringify({
+                        username: data.user_username,
+                        role: data.user_role,
+                        token: data.token
+                    }));
+                    // Esperar un momento para asegurar que los datos se guarden
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    window.location.href = '/options';
                 } else {
                     document.getElementById('errorMessage').style.display = 'block';
                 }
