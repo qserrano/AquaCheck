@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import analysisRoutes from './routes/analysisRoutes';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.static(path.join(__dirname, '..')));
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/analysis', analysisRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
