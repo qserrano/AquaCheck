@@ -1,5 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import * as analysisModel from '../models/analysisModel';
+import pool from '../db/db';
+
+// Función para verificar la conexión a la base de datos
+const checkDatabaseConnection = async () => {
+    try {
+        const client = await pool.connect();
+        client.release();
+        return true;
+    } catch (error) {
+        console.error('Error de conexión a la base de datos:', error);
+        return false;
+    }
+};
 
 export const getAnalysis = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,15 +26,53 @@ export const getAnalysis = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-export const createAnalysis = async (req: Request, res: Response, next: NextFunction) => {
+export const createAnalysis = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        // Verificar conexión a la base de datos
+        const isConnected = await checkDatabaseConnection();
+        if (!isConnected) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error de conexión a la base de datos'
+            });
+            return;
+        }
+
+        console.log('Datos recibidos en el controlador:', req.body);
+        
+        // Verificar que todos los campos requeridos estén presentes
+        const requiredFields = ['pool', 'data', 'time', 'free_chlorine', 'total_chlorine', 
+                              'cyanuric', 'acidity', 'turbidity', 'renovated_water', 
+                              'recirculated_water', 'analyst'];
+        
+        const missingFields = requiredFields.filter(field => !(field in req.body));
+        if (missingFields.length > 0) {
+            res.status(400).json({
+                status: 'error',
+                message: `Campos faltantes: ${missingFields.join(', ')}`
+            });
+            return;
+        }
+
         const newAnalysis = await analysisModel.newAnalysis(req.body);
         res.status(201).json({
             success: true,
             data: newAnalysis
         });
     } catch (error) {
-        next(error);
+        console.error('Error detallado en createAnalysis:', error);
+        if (error instanceof Error) {
+            res.status(500).json({
+                status: 'error',
+                message: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            });
+        } else {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error interno del servidor'
+            });
+        }
     }
 };
 

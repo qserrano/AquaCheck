@@ -5,10 +5,9 @@ const analysisSchema = z.object({
     pool: z.string()
         .min(1, { message: "El nombre de la piscina es requerido" })
         .max(100, { message: "El nombre de la piscina no puede exceder los 100 caracteres" }),
-    data: z.date({ 
-        required_error: "La fecha es requerida",
-        invalid_type_error: "La fecha debe tener un formato válido (YYYY-MM-DD)"
-    }),
+    data: z.string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "La fecha debe tener un formato válido (YYYY-MM-DD)" })
+        .transform((str) => new Date(str)),
     time: z.string()
         .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, { 
             message: "El formato de hora debe ser HH:mm:ss" 
@@ -30,10 +29,10 @@ const analysisSchema = z.object({
         .max(5, { message: "La turbidez no puede exceder 5 NTU" }),
     renovated_water: z.number()
         .min(0, { message: "El agua renovada no puede ser negativa" })
-        .max(100, { message: "El agua renovada no puede exceder 100%" }),
+        .max(999999, { message: "El agua renovada no puede exceder 999999" }),
     recirculated_water: z.number()
         .min(0, { message: "El agua recirculada no puede ser negativa" })
-        .max(100, { message: "El agua recirculada no puede exceder 100%" }),
+        .max(999999, { message: "El agua recirculada no puede exceder 999999" }),
     analyst: z.string()
         .min(1, { message: "El nombre del analista es requerido" })
         .max(100, { message: "El nombre del analista no puede exceder los 100 caracteres" })
