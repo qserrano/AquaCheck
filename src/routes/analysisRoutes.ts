@@ -3,6 +3,7 @@ import {
     getAnalysis,
     createAnalysis,
     getAnalysisByPool,
+    getAnalysisByAnalyst,
     deleteAnalysis,
     editAnalysis
 } from '../controllers/analysisController';
@@ -21,6 +22,7 @@ router.use(authenticate);
 // Rutas de análisis
 router.get('/', getAnalysis);
 router.get('/pool/:poolName', getAnalysisByPool);
+router.get('/analyst/:analystName', getAnalysisByAnalyst);
 router.post('/', validateCreateAnalysis, createAnalysis);
 router.put('/:id', validateUpdateAnalysis, editAnalysis);
 router.delete('/:id', validateAnalysisId, deleteAnalysis);

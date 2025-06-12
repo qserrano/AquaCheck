@@ -89,6 +89,19 @@ export const getAnalysisByPool = async (req: Request, res: Response, next: NextF
     }
 };
 
+export const getAnalysisByAnalyst = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { analystName } = req.params;
+        const analysis = await analysisModel.getAnalysisByAnalyst(analystName);
+        res.status(200).json({
+            success: true,
+            data: analysis
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const deleteAnalysis = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;

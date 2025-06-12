@@ -27,6 +27,21 @@ function navegarA(ruta) {
         case 'por-piscina':
             mostrarAnalisisPorPiscina(mainContent);
             break;
+        case 'por-analista':
+            mostrarAnalisisPorAnalista(mainContent);
+            break;
+        case 'informes-por-piscina':
+            mostrarInformesPorPiscina(mainContent);
+            break;
+        case 'informes-por-analista':
+            mostrarInformesPorAnalista(mainContent);
+            break;
+        case 'informes-por-fechas':
+            mostrarInformesPorFechas(mainContent);
+            break;
+        case 'informes-personalizados':
+            mostrarInformesPersonalizados(mainContent);
+            break;
         case 'nuevo-analisis':
             mainContent.innerHTML = `
                 <div class="form-container">
@@ -522,4 +537,446 @@ async function mostrarAnalisisPorPiscina(contenedor) {
             </div>
         `;
     }
+}
+
+async function mostrarAnalisisPorAnalista(contenedor) {
+    try {
+        // Obtener el token del localStorage
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || !userData.token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
+        }
+
+        // Primero obtenemos todos los analistas únicos
+        const response = await fetch('/api/analysis', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${userData.token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Error al obtener los analistas');
+        }
+
+        const data = await response.json();
+        const analisis = data.success && data.data ? data.data : [];
+        
+        // Obtener analistas únicos
+        const analistas = [...new Set(analisis.map(a => a.analyst))].sort();
+
+        // Mostrar el formulario de selección
+        contenedor.innerHTML = `
+            <div class="analisis-container">
+                <h2>Análisis por Analista</h2>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="analystSelect">Seleccione un analista:</label>
+                    <select id="analystSelect" class="form-control" style="width: 200px; padding: 8px; margin-top: 8px;">
+                        <option value="">Seleccione un analista</option>
+                        ${analistas.map(analyst => `<option value="${analyst}">${analyst}</option>`).join('')}
+                    </select>
+                </div>
+                <div id="tablaAnalisis" style="display: none;">
+                    <div class="table-container">
+                        <table class="analisis-table">
+                            <thead>
+                                <tr>
+                                    <th>Piscina</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Cloro Libre (ppm)</th>
+                                    <th>Cloro Total (ppm)</th>
+                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>pH</th>
+                                    <th>Turbidez (NTU)</th>
+                                    <th>Agua Renovada (m3)</th>
+                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Analista</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analisisTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agregar el evento change al select
+        const analystSelect = document.getElementById('analystSelect');
+        analystSelect.addEventListener('change', async (e) => {
+            const selectedAnalyst = e.target.value;
+            const tablaAnalisis = document.getElementById('tablaAnalisis');
+            const tbody = document.getElementById('analisisTableBody');
+
+            if (!selectedAnalyst) {
+                tablaAnalisis.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/analysis/analyst/${encodeURIComponent(selectedAnalyst)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${userData.token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener los análisis del analista');
+                }
+
+                const data = await response.json();
+                const analisis = data.success && data.data ? data.data : [];
+
+                tablaAnalisis.style.display = 'block';
+
+                if (analisis.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="11" class="no-data">No hay análisis registrados para este analista</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = analisis.map(analisis => `
+                    <tr>
+                        <td>${analisis.pool || ''}</td>
+                        <td>${analisis.data ? new Date(analisis.data).toLocaleDateString() : ''}</td>
+                        <td>${analisis.time || ''}</td>
+                        <td>${analisis.free_chlorine || ''}</td>
+                        <td>${analisis.total_chlorine || ''}</td>
+                        <td>${analisis.cyanuric || ''}</td>
+                        <td>${analisis.acidity || ''}</td>
+                        <td>${analisis.turbidity || ''}</td>
+                        <td>${analisis.renovated_water || ''}</td>
+                        <td>${analisis.recirculated_water || ''}</td>
+                        <td>${analisis.analyst || ''}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="error-container">
+                            <h3>Error al cargar los análisis</h3>
+                            <p>${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        contenedor.innerHTML = `
+            <div class="error-container">
+                <h3>Error al cargar los análisis</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+async function mostrarInformesPorPiscina(contenedor) {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || !userData.token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
+        }
+
+        const response = await fetch('/api/analysis', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${userData.token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Error al obtener las piscinas');
+        }
+
+        const data = await response.json();
+        const analisis = data.success && data.data ? data.data : [];
+        const piscinas = [...new Set(analisis.map(a => a.pool))].sort();
+
+        contenedor.innerHTML = `
+            <div class="analisis-container">
+                <h2>Generar Informes por Piscina</h2>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="poolSelectInforme">Seleccione una piscina:</label>
+                    <select id="poolSelectInforme" class="form-control" style="width: 200px; padding: 8px; margin-top: 8px;">
+                        <option value="">Seleccione una piscina</option>
+                        ${piscinas.map(pool => `<option value="${pool}">${pool}</option>`).join('')}
+                    </select>
+                </div>
+                <div id="vistaPrevia" style="display: none;">
+                    <h3>Vista Previa del Informe</h3>
+                    <div class="table-container">
+                        <table class="analisis-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Cloro Libre (ppm)</th>
+                                    <th>Cloro Total (ppm)</th>
+                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>pH</th>
+                                    <th>Turbidez (NTU)</th>
+                                    <th>Agua Renovada (m3)</th>
+                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Analista</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analisisTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="resumen-informe" style="margin: 20px 0;">
+                        <h4>Resumen del Informe</h4>
+                        <p id="totalAnalisis"></p>
+                        <p id="periodoAnalisis"></p>
+                    </div>
+                    <div class="form-group" style="margin: 20px 0;">
+                        <button id="generarPDF" class="btn-primary">Generar PDF</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const poolSelect = document.getElementById('poolSelectInforme');
+        const vistaPrevia = document.getElementById('vistaPrevia');
+        const tbody = document.getElementById('analisisTableBody');
+        const totalAnalisis = document.getElementById('totalAnalisis');
+        const periodoAnalisis = document.getElementById('periodoAnalisis');
+        const generarPDFBtn = document.getElementById('generarPDF');
+
+        let analisisActual = [];
+
+        poolSelect.addEventListener('change', async (e) => {
+            const selectedPool = e.target.value;
+            if (!selectedPool) {
+                vistaPrevia.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/analysis/pool/${encodeURIComponent(selectedPool)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${userData.token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener los análisis de la piscina');
+                }
+
+                const data = await response.json();
+                analisisActual = data.success && data.data ? data.data : [];
+
+                if (analisisActual.length === 0) {
+                    alert('No hay análisis registrados para esta piscina');
+                    vistaPrevia.style.display = 'none';
+                    return;
+                }
+
+                vistaPrevia.style.display = 'block';
+
+                tbody.innerHTML = analisisActual.map(analisis => `
+                    <tr>
+                        <td>${new Date(analisis.data).toLocaleDateString()}</td>
+                        <td>${analisis.time}</td>
+                        <td>${analisis.free_chlorine}</td>
+                        <td>${analisis.total_chlorine}</td>
+                        <td>${analisis.cyanuric}</td>
+                        <td>${analisis.acidity}</td>
+                        <td>${analisis.turbidity}</td>
+                        <td>${analisis.renovated_water}</td>
+                        <td>${analisis.recirculated_water}</td>
+                        <td>${analisis.analyst}</td>
+                        <td>${evaluarEstado(analisis)}</td>
+                    </tr>
+                `).join('');
+
+                totalAnalisis.textContent = `Total de análisis: ${analisisActual.length}`;
+                periodoAnalisis.textContent = `Período: ${new Date(analisisActual[0].data).toLocaleDateString()} - ${new Date(analisisActual[analisisActual.length-1].data).toLocaleDateString()}`;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar los análisis: ' + error.message);
+                vistaPrevia.style.display = 'none';
+            }
+        });
+
+        generarPDFBtn.addEventListener('click', () => {
+            if (analisisActual.length > 0) {
+                generarPDFPorPiscina(poolSelect.value, analisisActual);
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        contenedor.innerHTML = `
+            <div class="error-container">
+                <h3>Error al cargar los informes</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+async function mostrarInformesPorAnalista(contenedor) {
+    contenedor.innerHTML = `
+        <div class="analisis-container">
+            <h2>Informes por Analista</h2>
+            <p>Esta funcionalidad estará disponible próximamente.</p>
+        </div>
+    `;
+}
+
+async function mostrarInformesPorFechas(contenedor) {
+    contenedor.innerHTML = `
+        <div class="analisis-container">
+            <h2>Informes por Rango de Fechas</h2>
+            <p>Esta funcionalidad estará disponible próximamente.</p>
+        </div>
+    `;
+}
+
+async function mostrarInformesPersonalizados(contenedor) {
+    contenedor.innerHTML = `
+        <div class="analisis-container">
+            <h2>Informes Personalizados</h2>
+            <p>Esta funcionalidad estará disponible próximamente.</p>
+        </div>
+    `;
+}
+
+function generarPDFPorPiscina(poolName, analisis) {
+    // Definir el documento
+    const docDefinition = {
+        pageOrientation: 'landscape',
+        pageSize: 'A4',
+        header: {
+            text: 'AquaCheck - Informe de Análisis',
+            alignment: 'center',
+            margin: [0, 10, 0, 0]
+        },
+        footer: function(currentPage, pageCount) {
+            return {
+                text: `Página ${currentPage} de ${pageCount}`,
+                alignment: 'center',
+                margin: [0, 0, 0, 10]
+            };
+        },
+        content: [
+            {
+                text: `Informe de Análisis - Piscina: ${poolName}`,
+                style: 'header',
+                margin: [0, 0, 0, 20]
+            },
+            {
+                text: `Fecha de generación: ${new Date().toLocaleDateString()}`,
+                margin: [0, 0, 0, 20]
+            },
+            {
+                table: {
+                    headerRows: 1,
+                    widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                    body: [
+                        [
+                            'Fecha',
+                            'Hora',
+                            'Cloro Libre (ppm)',
+                            'Cloro Total (ppm)',
+                            'Ácido Cianúrico (ppm)',
+                            'pH',
+                            'Turbidez (NTU)',
+                            'Agua Renovada (m3)',
+                            'Agua Recirculada (m3)',
+                            'Analista',
+                            'Estado'
+                        ],
+                        ...analisis.map(a => [
+                            new Date(a.data).toLocaleDateString(),
+                            a.time,
+                            a.free_chlorine,
+                            a.total_chlorine,
+                            a.cyanuric,
+                            a.acidity,
+                            a.turbidity,
+                            a.renovated_water,
+                            a.recirculated_water,
+                            a.analyst,
+                            evaluarEstado(a)
+                        ])
+                    ]
+                }
+            },
+            {
+                text: 'Resumen de Análisis',
+                style: 'subheader',
+                margin: [0, 20, 0, 10]
+            },
+            {
+                text: `Total de análisis: ${analisis.length}`,
+                margin: [0, 0, 0, 5]
+            },
+            {
+                text: `Período: ${new Date(analisis[0].data).toLocaleDateString()} - ${new Date(analisis[analisis.length-1].data).toLocaleDateString()}`,
+                margin: [0, 0, 0, 20]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                alignment: 'center'
+            },
+            subheader: {
+                fontSize: 14,
+                bold: true
+            }
+        },
+        defaultStyle: {
+            fontSize: 10
+        }
+    };
+
+    // Generar y descargar el PDF
+    pdfMake.createPdf(docDefinition).download(`Informe_${poolName}_${new Date().toISOString().split('T')[0]}.pdf`);
+}
+
+function evaluarEstado(analisis) {
+    // Función para evaluar el estado de los parámetros
+    const evaluarParametro = (valor, min, max) => {
+        if (valor < min) return 'Bajo';
+        if (valor > max) return 'Alto';
+        return 'Óptimo';
+    };
+
+    const estados = [
+        evaluarParametro(analisis.free_chlorine, 1, 3), // Cloro libre
+        evaluarParametro(analisis.total_chlorine, 1, 3), // Cloro total
+        evaluarParametro(analisis.cyanuric, 30, 50), // Ácido cianúrico
+        evaluarParametro(analisis.acidity, 7.2, 7.6), // pH
+        evaluarParametro(analisis.turbidity, 0, 0.5) // Turbidez
+    ];
+
+    // Si hay algún parámetro fuera de rango, el estado general es "Requiere atención"
+    return estados.some(estado => estado !== 'Óptimo') ? 'Requiere atención' : 'Óptimo';
 } 

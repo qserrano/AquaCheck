@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style-options.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="/assets/js/options.js" defer></script>
 </head>
 <body>
@@ -28,10 +30,18 @@
                 <ul class="submenu">
                     <li onclick="navegarA('ver-todos')">Ver todos</li>
                     <li onclick="navegarA('por-piscina')">Por piscina</li>
-                    <li onclick="navegarA('entre-fechas')">Entre fechas</li>
+                    <li onclick="navegarA('por-analista')">Por analista</li>
                 </ul>
             </li>
-            <li onclick="navegarA('informes')">📊 Informes</li>
+            <li class="submenu-parent">
+                📊 Informes
+                <ul class="submenu">
+                    <li onclick="navegarA('informes-por-piscina')">Por piscina</li>
+                    <li onclick="navegarA('informes-por-analista')">Por analista</li>
+                    <li onclick="navegarA('informes-por-fechas')">Por rango de fechas</li>
+                    <li onclick="navegarA('informes-personalizados')">Personalizados</li>
+                </ul>
+            </li>
             <li onclick="navegarA('gestion-usuarios')">👥 Gestión de usuarios</li>
             <li onclick="navegarA('mantenimiento')">🔧 Mantenimiento</li>
             <li></li>

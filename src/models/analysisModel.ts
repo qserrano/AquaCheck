@@ -91,6 +91,16 @@ export const getAnalysisByPool = async (poolName: string): Promise<Analysis[]> =
     return result.rows;
 };
 
+export const getAnalysisByAnalyst = async (analystName: string): Promise<Analysis[]> => {
+    const query = `
+        SELECT * FROM analysis
+        WHERE analyst = $1
+        ORDER BY data ASC, time ASC
+    `;
+    const result = await pool.query(query, [analystName]);
+    return result.rows;
+};
+
 export const deleteAnalysis = async (id: number): Promise<Analysis> => {
     const query = `
         DELETE FROM analysis
