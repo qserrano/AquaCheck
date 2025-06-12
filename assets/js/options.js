@@ -259,8 +259,8 @@ async function mostrarTodosAnalisis(contenedor) {
                                 <th>Ácido Cianúrico (ppm)</th>
                                 <th>pH</th>
                                 <th>Turbidez (NTU)</th>
-                                <th>Agua Renovada (L)</th>
-                                <th>Agua Recirculada (L)</th>
+                                <th>Agua Renovada (m3)</th>
+                                <th>Agua Recirculada (m3)</th>
                                 <th>Analista</th>
                             </tr>
                         </thead>
