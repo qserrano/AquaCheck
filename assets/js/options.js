@@ -730,13 +730,13 @@ async function mostrarInformesPorPiscina(contenedor) {
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Hora</th>
-                                    <th>Cloro Libre (ppm)</th>
-                                    <th>Cloro Total (ppm)</th>
-                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>Cloro Lib. (ppm)</th>
+                                    <th>Cloro Tot. (ppm)</th>
+                                    <th>CyA (ppm)</th>
                                     <th>pH</th>
-                                    <th>Turbidez (NTU)</th>
-                                    <th>Agua Renovada (m3)</th>
-                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Turb. (NTU)</th>
+                                    <th>Agua Renov. (m3)</th>
+                                    <th>Agua Recir. (m3)</th>
                                     <th>Analista</th>
                                     <th>Estado</th>
                                 </tr>
@@ -901,13 +901,13 @@ function generarPDFPorPiscina(poolName, analisis) {
                         [
                             'Fecha',
                             'Hora',
-                            'Cloro Libre (ppm)',
-                            'Cloro Total (ppm)',
-                            'Ácido Cianúrico (ppm)',
+                            'Cloro Lib. (ppm)',
+                            'Cloro Tot. (ppm)',
+                            'CyA (ppm)',
                             'pH',
-                            'Turbidez (NTU)',
-                            'Agua Renovada (m3)',
-                            'Agua Recirculada (m3)',
+                            'Turb. (NTU)',
+                            'Agua Renov. (m3)',
+                            'Agua Recir. (m3)',
                             'Analista',
                             'Estado'
                         ],
@@ -977,6 +977,6 @@ function evaluarEstado(analisis) {
         evaluarParametro(analisis.turbidity, 0, 0.5) // Turbidez
     ];
 
-    // Si hay algún parámetro fuera de rango, el estado general es "Requiere atención"
-    return estados.some(estado => estado !== 'Óptimo') ? 'Requiere atención' : 'Óptimo';
+    // Si hay algún parámetro fuera de rango, el estado general es "No óptimo"
+    return estados.some(estado => estado !== 'Óptimo') ? 'No óptimo' : 'Óptimo';
 } 
