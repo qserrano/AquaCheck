@@ -17,10 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function navegarA(destino) {
+function navegarA(ruta) {
     const mainContent = document.querySelector('.main-content');
     
-    switch(destino) {
+    switch(ruta) {
+        case 'ver-todos':
+            mostrarTodosAnalisis(mainContent);
+            break;
         case 'nuevo-analisis':
             mainContent.innerHTML = `
                 <div class="form-container">
@@ -67,12 +70,12 @@ function navegarA(destino) {
                         </div>
 
                         <div class="form-group">
-                            <label for="renovated_water">Agua Renovada (L):</label>
+                            <label for="renovated_water">Agua Renovada (m3):</label>
                             <input type="number" id="renovated_water" name="renovated_water" min="0" max="999999" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="recirculated_water">Agua Recirculada (L):</label>
+                            <label for="recirculated_water">Agua Recirculada (m3):</label>
                             <input type="number" id="recirculated_water" name="recirculated_water" min="0" max="999999" required>
                         </div>
 
@@ -236,4 +239,138 @@ function mostrarNotificacion(mensaje, tipo) {
 function cerrarSesion() {
     localStorage.removeItem('userData');
     window.location.href = '/login.html';
+}
+
+async function mostrarTodosAnalisis(contenedor) {
+    try {
+        // Limpiar el contenedor
+        contenedor.innerHTML = `
+            <div class="analisis-container">
+                <h2>Análisis Registrados</h2>
+                <div class="table-container">
+                    <table class="analisis-table">
+                        <thead>
+                            <tr>
+                                <th>Piscina</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Cloro Libre (ppm)</th>
+                                <th>Cloro Total (ppm)</th>
+                                <th>Ácido Cianúrico (ppm)</th>
+                                <th>pH</th>
+                                <th>Turbidez (NTU)</th>
+                                <th>Agua Renovada (L)</th>
+                                <th>Agua Recirculada (L)</th>
+                                <th>Analista</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analisisTableBody">
+                            <tr>
+                                <td colspan="11" class="loading">Cargando análisis...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        // Obtener el token del localStorage
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || !userData.token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
+        }
+
+        // Realizar la petición al backend
+        const response = await fetch('/api/analysis', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${userData.token}`
+            }
+        });
+
+        console.log('Status de la respuesta:', response.status);
+        console.log('Headers de la respuesta:', Object.fromEntries(response.headers.entries()));
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Error al obtener los análisis');
+        }
+
+        const data = await response.json();
+        console.log('Respuesta completa del servidor:', data);
+
+        // Extraer los datos del análisis de la respuesta
+        const analisis = data.success && data.data ? data.data : [];
+        console.log('Datos de análisis procesados:', analisis);
+        console.log('Número de análisis encontrados:', analisis.length);
+
+        const tbody = document.getElementById('analisisTableBody');
+        
+        if (analisis.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="11" class="no-data">No hay análisis registrados</td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = analisis.map(analisis => `
+            <tr>
+                <td>${analisis.pool || ''}</td>
+                <td>${analisis.data ? new Date(analisis.data).toLocaleDateString() : ''}</td>
+                <td>${analisis.time || ''}</td>
+                <td>${analisis.free_chlorine || ''}</td>
+                <td>${analisis.total_chlorine || ''}</td>
+                <td>${analisis.cyanuric || ''}</td>
+                <td>${analisis.acidity || ''}</td>
+                <td>${analisis.turbidity || ''}</td>
+                <td>${analisis.renovated_water || ''}</td>
+                <td>${analisis.recirculated_water || ''}</td>
+                <td>${analisis.analyst || ''}</td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error:', error);
+        contenedor.innerHTML = `
+            <div class="error-container">
+                <h3>Error al cargar los análisis</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+function determinarEstado(analisis) {
+    // Lógica para determinar el estado basado en los valores
+    const ph = analisis.acidity;
+    const cloro = analisis.free_chlorine;
+    const acidoCianurico = analisis.cyanuric;
+
+    if (ph >= 7.2 && ph <= 7.6 && 
+        cloro >= 1 && cloro <= 3 && 
+        acidoCianurico >= 30 && acidoCianurico <= 50) {
+        return 'Óptimo';
+    } else if (ph >= 7.0 && ph <= 7.8 && 
+               cloro >= 0.5 && cloro <= 4 && 
+               acidoCianurico >= 20 && acidoCianurico <= 60) {
+        return 'Regular';
+    } else {
+        return 'Crítico';
+    }
+}
+
+function verDetalleAnalisis(id) {
+    // Implementar la vista detallada del análisis
+    console.log('Ver detalle del análisis:', id);
+}
+
+function editarAnalisis(id) {
+    // Implementar la edición del análisis
+    console.log('Editar análisis:', id);
 } 
