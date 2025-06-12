@@ -23,7 +23,14 @@
     <div class="sidebar">
         <ul class="sidebar-menu">
             <li onclick="navegarA('nuevo-analisis')">➕ Nuevo análisis</li>
-            <li onclick="navegarA('ver-analisis')">📊 Ver análisis</li>
+            <li class="submenu-parent">
+                📊 Ver análisis
+                <ul class="submenu">
+                    <li onclick="navegarA('ver-todos')">Ver todos</li>
+                    <li onclick="navegarA('por-piscina')">Por piscina</li>
+                    <li onclick="navegarA('entre-fechas')">Entre fechas</li>
+                </ul>
+            </li>
             <li onclick="navegarA('informes')">📊 Informes</li>
             <li onclick="navegarA('gestion-usuarios')">👥 Gestión de usuarios</li>
             <li onclick="navegarA('mantenimiento')">🔧 Mantenimiento</li>
