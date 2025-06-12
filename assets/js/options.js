@@ -24,6 +24,9 @@ function navegarA(ruta) {
         case 'ver-todos':
             mostrarTodosAnalisis(mainContent);
             break;
+        case 'por-piscina':
+            mostrarAnalisisPorPiscina(mainContent);
+            break;
         case 'nuevo-analisis':
             mainContent.innerHTML = `
                 <div class="form-container">
@@ -373,4 +376,150 @@ function verDetalleAnalisis(id) {
 function editarAnalisis(id) {
     // Implementar la edición del análisis
     console.log('Editar análisis:', id);
+}
+
+async function mostrarAnalisisPorPiscina(contenedor) {
+    try {
+        // Obtener el token del localStorage
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || !userData.token) {
+            throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
+        }
+
+        // Primero obtenemos todas las piscinas únicas
+        const response = await fetch('/api/analysis', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${userData.token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Error al obtener las piscinas');
+        }
+
+        const data = await response.json();
+        const analisis = data.success && data.data ? data.data : [];
+        
+        // Obtener piscinas únicas
+        const piscinas = [...new Set(analisis.map(a => a.pool))].sort();
+
+        // Mostrar el formulario de selección
+        contenedor.innerHTML = `
+            <div class="analisis-container">
+                <h2>Análisis por Piscina</h2>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="poolSelect">Seleccione una piscina:</label>
+                    <select id="poolSelect" class="form-control" style="width: 200px; padding: 8px; margin-top: 8px;">
+                        <option value="">Seleccione una piscina</option>
+                        ${piscinas.map(pool => `<option value="${pool}">${pool}</option>`).join('')}
+                    </select>
+                </div>
+                <div id="tablaAnalisis" style="display: none;">
+                    <div class="table-container">
+                        <table class="analisis-table">
+                            <thead>
+                                <tr>
+                                    <th>Piscina</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Cloro Libre (ppm)</th>
+                                    <th>Cloro Total (ppm)</th>
+                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>pH</th>
+                                    <th>Turbidez (NTU)</th>
+                                    <th>Agua Renovada (m3)</th>
+                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Analista</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analisisTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agregar el evento change al select
+        const poolSelect = document.getElementById('poolSelect');
+        poolSelect.addEventListener('change', async (e) => {
+            const selectedPool = e.target.value;
+            const tablaAnalisis = document.getElementById('tablaAnalisis');
+            const tbody = document.getElementById('analisisTableBody');
+
+            if (!selectedPool) {
+                tablaAnalisis.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/analysis/pool/${encodeURIComponent(selectedPool)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${userData.token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener los análisis de la piscina');
+                }
+
+                const data = await response.json();
+                const analisis = data.success && data.data ? data.data : [];
+
+                tablaAnalisis.style.display = 'block';
+
+                if (analisis.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="11" class="no-data">No hay análisis registrados para esta piscina</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = analisis.map(analisis => `
+                    <tr>
+                        <td>${analisis.pool || ''}</td>
+                        <td>${analisis.data ? new Date(analisis.data).toLocaleDateString() : ''}</td>
+                        <td>${analisis.time || ''}</td>
+                        <td>${analisis.free_chlorine || ''}</td>
+                        <td>${analisis.total_chlorine || ''}</td>
+                        <td>${analisis.cyanuric || ''}</td>
+                        <td>${analisis.acidity || ''}</td>
+                        <td>${analisis.turbidity || ''}</td>
+                        <td>${analisis.renovated_water || ''}</td>
+                        <td>${analisis.recirculated_water || ''}</td>
+                        <td>${analisis.analyst || ''}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="error-container">
+                            <h3>Error al cargar los análisis</h3>
+                            <p>${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        contenedor.innerHTML = `
+            <div class="error-container">
+                <h3>Error al cargar los análisis</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
 } 
