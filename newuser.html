@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - API Users</title>
+    <title>AquaCheck - Nuevo Usuario</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style-login.css">
 </head>
+
 <body>
     <div class="login-container">
         <div class="login-header">
@@ -30,7 +35,8 @@
             </div>
             <div class="form-group">
                 <label for="dni">DNI</label>
-                <input type="text" id="dni" name="dni" required pattern="[0-9]{8}[A-Za-z]{1}" title="Introduce un DNI válido (8 números y 1 letra)">
+                <input type="text" id="dni" name="dni" required pattern="[0-9]{8}[A-Za-z]{1}"
+                    title="Introduce un DNI válido (8 números y 1 letra)">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -60,7 +66,7 @@
     <script>
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const name = document.getElementById('name').value;
             const surname = document.getElementById('surname').value;
@@ -68,18 +74,18 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            
+
             // Ocultar mensajes previos
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('successMessage').style.display = 'none';
-            
+
             // Validar que las contraseñas coincidan
             if (password !== confirmPassword) {
                 document.getElementById('errorMessage').textContent = 'Las contraseñas no coinciden';
                 document.getElementById('errorMessage').style.display = 'block';
                 return;
             }
-            
+
             try {
                 const response = await fetch('/api/users', {
                     method: 'POST',
@@ -116,4 +122,5 @@
         });
     </script>
 </body>
-</html> 
+
+</html>
