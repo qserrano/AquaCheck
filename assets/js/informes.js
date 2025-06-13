@@ -850,10 +850,11 @@ async function mostrarInformesPersonalizados(contenedor) {
             throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
         }
 
-        const response = await fetch('/api/analysis', {
+        const response = await fetch(`${API_BASE_URL}/api/analysis`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${userData.token}`
+                'Authorization': `Bearer ${userData.token}`,
+                'Content-Type': 'application/json'
             }
         });
 
@@ -899,7 +900,7 @@ async function mostrarInformesPersonalizados(contenedor) {
                 <div class="form-group" style="margin: 20px 0;">
                     <button id="buscarAnalisisPersonalizado" class="btn-primary">Buscar Análisis</button>
                 </div>
-                <div id="vistaPrevia" style="display: none;">
+                <div id="vistaPreviaPersonalizado" style="display: none;">
                     <h3>Vista Previa del Informe</h3>
                     <div class="table-container">
                         <table class="analisis-table">
@@ -919,17 +920,17 @@ async function mostrarInformesPersonalizados(contenedor) {
                                     <th>Estado</th>
                                 </tr>
                             </thead>
-                            <tbody id="analisisTableBody">
+                            <tbody id="analisisTableBodyPersonalizado">
                             </tbody>
                         </table>
                     </div>
                     <div class="resumen-informe" style="margin: 20px 0;">
                         <h4>Resumen del Informe</h4>
-                        <p id="totalAnalisis"></p>
-                        <p id="periodoAnalisis"></p>
+                        <p id="totalAnalisisPersonalizado"></p>
+                        <p id="periodoAnalisisPersonalizado"></p>
                     </div>
                     <div class="form-group" style="margin: 20px 0;">
-                        <button id="generarPDF" class="btn-primary">Generar PDF</button>
+                        <button id="generarPDFPersonalizado" class="btn-primary">Generar PDF</button>
                     </div>
                 </div>
             </div>
@@ -940,11 +941,11 @@ async function mostrarInformesPersonalizados(contenedor) {
         const fechaInicio = document.getElementById('fechaInicioPersonalizado');
         const fechaFin = document.getElementById('fechaFinPersonalizado');
         const buscarBtn = document.getElementById('buscarAnalisisPersonalizado');
-        const vistaPrevia = document.getElementById('vistaPrevia');
-        const tbody = document.getElementById('analisisTableBody');
-        const totalAnalisis = document.getElementById('totalAnalisis');
-        const periodoAnalisis = document.getElementById('periodoAnalisis');
-        const generarPDFBtn = document.getElementById('generarPDF');
+        const vistaPrevia = document.getElementById('vistaPreviaPersonalizado');
+        const tbody = document.getElementById('analisisTableBodyPersonalizado');
+        const totalAnalisis = document.getElementById('totalAnalisisPersonalizado');
+        const periodoAnalisis = document.getElementById('periodoAnalisisPersonalizado');
+        const generarPDFBtn = document.getElementById('generarPDFPersonalizado');
 
         let analisisActual = [];
 
@@ -960,26 +961,36 @@ async function mostrarInformesPersonalizados(contenedor) {
             }
 
             try {
-                let url = `/api/analysis/custom?start=${inicio}&end=${fin}`;
-                if (pool) url += `&pool=${encodeURIComponent(pool)}`;
-                if (analyst) url += `&analyst=${encodeURIComponent(analyst)}`;
-
-                const response = await fetch(url, {
+                const response = await fetch(`${API_BASE_URL}/api/analysis/date-range?start=${inicio}&end=${fin}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${userData.token}`
+                        'Authorization': `Bearer ${userData.token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
                 if (!response.ok) {
-                    throw new Error('Error al obtener los análisis');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al obtener los análisis');
                 }
 
                 const data = await response.json();
-                analisisActual = data.success && data.data ? data.data : [];
+                let analisis = data.success && data.data ? data.data : [];
+
+                // Filtrar por piscina si se seleccionó una
+                if (pool) {
+                    analisis = analisis.filter(a => a.pool === pool);
+                }
+
+                // Filtrar por analista si se seleccionó uno
+                if (analyst) {
+                    analisis = analisis.filter(a => a.analyst === analyst);
+                }
+
+                analisisActual = analisis;
 
                 if (analisisActual.length === 0) {
-                    alert('No hay análisis que coincidan con los criterios seleccionados');
+                    alert('No hay análisis registrados con los filtros seleccionados');
                     vistaPrevia.style.display = 'none';
                     return;
                 }
@@ -1007,7 +1018,6 @@ async function mostrarInformesPersonalizados(contenedor) {
                 periodoAnalisis.textContent = `Período: ${new Date(analisisActual[0].data).toLocaleDateString()} - ${new Date(analisisActual[analisisActual.length-1].data).toLocaleDateString()}`;
 
             } catch (error) {
-                console.error('Error:', error);
                 alert('Error al cargar los análisis: ' + error.message);
                 vistaPrevia.style.display = 'none';
             }
@@ -1015,12 +1025,17 @@ async function mostrarInformesPersonalizados(contenedor) {
 
         generarPDFBtn.addEventListener('click', () => {
             if (analisisActual.length > 0) {
-                generarPDFPersonalizado(poolSelect.value, analystSelect.value, fechaInicio.value, fechaFin.value, analisisActual);
+                generarPDFPersonalizado(
+                    poolSelect.value,
+                    analystSelect.value,
+                    fechaInicio.value,
+                    fechaFin.value,
+                    analisisActual
+                );
             }
         });
 
     } catch (error) {
-        console.error('Error:', error);
         contenedor.innerHTML = `
             <div class="error-container">
                 <h3>Error al cargar los informes</h3>
