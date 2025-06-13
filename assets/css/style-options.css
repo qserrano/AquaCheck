@@ -84,7 +84,7 @@ body {
 }
 
 .sidebar-menu li:hover {
-    background-color: #f0f0f0;
+    background-color: var(--color-secundario);
 }
 
 /* Estilos para el submenú */
@@ -118,7 +118,7 @@ body {
 }
 
 .submenu li:hover {
-    background-color: #f5f5f5;
+    background-color: var(--color-secundario);
 }
 
 /* Estilos para el formulario de creación de usuarios */
