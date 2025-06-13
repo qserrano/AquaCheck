@@ -161,4 +161,19 @@ body {
 
 .logout-button:hover {
     background-color: #d35400;
-} 
+}
+
+.info-message {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.info-message p {
+    margin: 0;
+}

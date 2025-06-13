@@ -16,9 +16,9 @@ function mostrarNotificacion(mensaje, tipo) {
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion ${tipo}`;
     notificacion.textContent = mensaje;
-    
+
     document.body.appendChild(notificacion);
-    
+
     // Animar la entrada
     setTimeout(() => {
         notificacion.style.opacity = '1';
@@ -38,7 +38,7 @@ function mostrarNotificacion(mensaje, tipo) {
 function navegarA(ruta) {
     const mainContent = document.querySelector('.main-content');
     const userData = JSON.parse(localStorage.getItem('userData'));
-    
+
     // Validar acceso a informes
     if (ruta.startsWith('informes-')) {
         if (!userData || !userData.role || (userData.role !== 'administrador' && userData.role !== 'tecnico')) {
@@ -51,8 +51,8 @@ function navegarA(ruta) {
             return;
         }
     }
-    
-    switch(ruta) {
+
+    switch (ruta) {
         case 'ver-todos':
             mostrarTodosAnalisis(mainContent);
             break;
@@ -73,6 +73,9 @@ function navegarA(ruta) {
             break;
         case 'informes-personalizados':
             mostrarInformesPersonalizados(mainContent);
+            break;
+        case 'crear-usuario':
+            mostrarCrearUsuario();
             break;
         case 'nuevo-analisis':
             mainContent.innerHTML = `

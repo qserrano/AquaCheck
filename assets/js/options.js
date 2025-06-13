@@ -1,4 +1,4 @@
-import { API_BASE_URL, cargarUsuario } from './usuarios.js';
+import { API_BASE_URL, cargarUsuario, crearUsuario, mostrarCrearUsuario } from './usuarios.js';
 import { cerrarSesion } from './sesion.js';
 import { mostrarNotificacion, navegarA } from './mantenimiento.js';
 import {
@@ -20,10 +20,10 @@ import {
 } from './informes.js';
 
 // Obtener la información del usuario del localStorage
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const userData = JSON.parse(localStorage.getItem('userData'));
     console.log('Datos del usuario en localStorage:', userData);
-    
+
     if (userData) {
         // Usar directamente los datos del localStorage
         document.getElementById('userName').textContent = userData.username;
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar/ocultar menús según el rol
         const informesMenu = document.getElementById('informesMenu');
         const usuariosMenu = document.getElementById('usuariosMenu');
-        
+
         if (userData.role === 'administrador' || userData.role === 'tecnico') {
             informesMenu.style.display = 'block';
         }
@@ -62,4 +62,5 @@ window.mostrarInformesPersonalizados = mostrarInformesPersonalizados;
 window.generarPDFPorPiscina = generarPDFPorPiscina;
 window.generarPDFPorAnalista = generarPDFPorAnalista;
 window.generarPDFPorFechas = generarPDFPorFechas;
-window.generarPDFPersonalizado = generarPDFPersonalizado; 
+window.generarPDFPersonalizado = generarPDFPersonalizado;
+window.mostrarCrearUsuario = mostrarCrearUsuario; 
