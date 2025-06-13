@@ -19,6 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function navegarA(ruta) {
     const mainContent = document.querySelector('.main-content');
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    
+    // Validar acceso a informes
+    if (ruta.startsWith('informes-')) {
+        if (!userData || !userData.role || (userData.role !== 'administrador' && userData.role !== 'tecnico')) {
+            mainContent.innerHTML = `
+                <div class="error-container">
+                    <h3>Acceso Restringido</h3>
+                    <p>No tienes permisos para acceder a esta sección. Solo administradores y técnicos pueden generar informes.</p>
+                </div>
+            `;
+            return;
+        }
+    }
     
     switch(ruta) {
         case 'ver-todos':

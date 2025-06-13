@@ -33,7 +33,7 @@
                     <li onclick="navegarA('por-analista')">Por analista</li>
                 </ul>
             </li>
-            <li class="submenu-parent">
+            <li class="submenu-parent" id="informesMenu" style="display: none;">
                 📊 Informes
                 <ul class="submenu">
                     <li onclick="navegarA('informes-por-piscina')">Por piscina</li>
@@ -52,5 +52,17 @@
     <div class="main-content">
         <!-- Aquí irá el contenido principal de la página -->
     </div>
+
+    <script>
+        // Mostrar/ocultar menú de informes según el rol
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const informesMenu = document.getElementById('informesMenu');
+            
+            if (userData && userData.role && (userData.role === 'administrador' || userData.role === 'tecnico')) {
+                informesMenu.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html> 
