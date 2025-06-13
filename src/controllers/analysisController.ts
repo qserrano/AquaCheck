@@ -128,3 +128,26 @@ export const editAnalysis = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
+export const getAnalysisByDateRange = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { start, end } = req.query;
+        
+        if (!start || !end) {
+            res.status(400).json({
+                success: false,
+                message: 'Se requieren las fechas de inicio y fin'
+            });
+            return;
+        }
+
+        const analysis = await analysisModel.getAnalysisByDateRange(start as string, end as string);
+        
+        res.status(200).json({
+            success: true,
+            data: analysis
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+

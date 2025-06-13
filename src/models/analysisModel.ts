@@ -146,3 +146,13 @@ export const editAnalysis = async (id: number, analysis: Omit<Analysis, 'id_anal
     return result.rows[0];
 };
 
+export const getAnalysisByDateRange = async (startDate: string, endDate: string): Promise<Analysis[]> => {
+    const query = `
+        SELECT * FROM analysis
+        WHERE data BETWEEN $1 AND $2
+        ORDER BY data ASC, time ASC
+    `;
+    const result = await pool.query(query, [startDate, endDate]);
+    return result.rows;
+};
+

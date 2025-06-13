@@ -5,7 +5,8 @@ import {
     getAnalysisByPool,
     getAnalysisByAnalyst,
     deleteAnalysis,
-    editAnalysis
+    editAnalysis,
+    getAnalysisByDateRange
 } from '../controllers/analysisController';
 import { authenticate } from '../middlewares/auth';
 import {
@@ -23,6 +24,7 @@ router.use(authenticate);
 router.get('/', getAnalysis);
 router.get('/pool/:poolName', getAnalysisByPool);
 router.get('/analyst/:analystName', getAnalysisByAnalyst);
+router.get('/date-range', getAnalysisByDateRange);
 router.post('/', validateCreateAnalysis, createAnalysis);
 router.put('/:id', validateUpdateAnalysis, editAnalysis);
 router.delete('/:id', validateAnalysisId, deleteAnalysis);
