@@ -42,7 +42,15 @@
                     <li onclick="navegarA('informes-personalizados')">Personalizados</li>
                 </ul>
             </li>
-            <li onclick="navegarA('gestion-usuarios')">👥 Gestión de usuarios</li>
+            <li class="submenu-parent" id="usuariosMenu" style="display: none;">
+                👥 Gestión de usuarios
+                <ul class="submenu">
+                    <li onclick="navegarA('crear-usuario')">Crear usuario</li>
+                    <li onclick="navegarA('listar-usuarios')">Listar usuarios</li>
+                    <li onclick="navegarA('editar-usuario')">Editar usuario</li>
+                    <li onclick="navegarA('eliminar-usuario')">Eliminar usuario</li>
+                </ul>
+            </li>
             <li onclick="navegarA('mantenimiento')">🔧 Mantenimiento</li>
             <li></li>
             <li onclick="cerrarSesion()">🚪 Cerrar sesión</li>
@@ -52,17 +60,5 @@
     <div class="main-content">
         <!-- Aquí irá el contenido principal de la página -->
     </div>
-
-    <script>
-        // Mostrar/ocultar menú de informes según el rol
-        document.addEventListener('DOMContentLoaded', function() {
-            const userData = JSON.parse(localStorage.getItem('userData'));
-            const informesMenu = document.getElementById('informesMenu');
-            
-            if (userData && userData.role && (userData.role === 'administrador' || userData.role === 'tecnico')) {
-                informesMenu.style.display = 'block';
-            }
-        });
-    </script>
 </body>
 </html> 

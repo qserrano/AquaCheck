@@ -28,6 +28,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Usar directamente los datos del localStorage
         document.getElementById('userName').textContent = userData.username;
         document.getElementById('userRole').textContent = userData.role;
+
+        // Mostrar/ocultar menús según el rol
+        const informesMenu = document.getElementById('informesMenu');
+        const usuariosMenu = document.getElementById('usuariosMenu');
+        
+        if (userData.role === 'administrador' || userData.role === 'tecnico') {
+            informesMenu.style.display = 'block';
+        }
+        if (userData.role === 'administrador') {
+            usuariosMenu.style.display = 'block';
+        }
     } else {
         console.log('No hay datos de usuario en localStorage');
         // Si no hay datos del usuario, redirigir al login
