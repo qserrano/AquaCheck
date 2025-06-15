@@ -38,13 +38,11 @@ export const createAnalysis = async (req: Request, res: Response, next: NextFunc
             return;
         }
 
-        console.log('Datos recibidos en el controlador:', req.body);
-        
         // Verificar que todos los campos requeridos estén presentes
-        const requiredFields = ['pool', 'data', 'time', 'free_chlorine', 'total_chlorine', 
-                              'cyanuric', 'acidity', 'turbidity', 'renovated_water', 
-                              'recirculated_water', 'analyst'];
-        
+        const requiredFields = ['pool', 'data', 'time', 'free_chlorine', 'total_chlorine',
+            'cyanuric', 'acidity', 'turbidity', 'renovated_water',
+            'recirculated_water', 'analyst'];
+
         const missingFields = requiredFields.filter(field => !(field in req.body));
         if (missingFields.length > 0) {
             res.status(400).json({
@@ -131,7 +129,7 @@ export const editAnalysis = async (req: Request, res: Response, next: NextFuncti
 export const getAnalysisByDateRange = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { start, end } = req.query;
-        
+
         if (!start || !end) {
             res.status(400).json({
                 success: false,
@@ -141,7 +139,7 @@ export const getAnalysisByDateRange = async (req: Request, res: Response, next: 
         }
 
         const analysis = await analysisModel.getAnalysisByDateRange(start as string, end as string);
-        
+
         res.status(200).json({
             success: true,
             data: analysis

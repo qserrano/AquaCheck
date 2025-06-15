@@ -27,8 +27,7 @@ export const getAnalysis = async (): Promise<Analysis[]> => {
 
 export const newAnalysis = async (analysis: Omit<Analysis, 'id_analysis' | 'created_at'>): Promise<Analysis> => {
     try {
-        console.log('Intentando insertar análisis con datos:', analysis);
-        
+
         // Validar que la fecha sea válida
         const date = new Date(analysis.data);
         if (isNaN(date.getTime())) {
@@ -62,15 +61,13 @@ export const newAnalysis = async (analysis: Omit<Analysis, 'id_analysis' | 'crea
             analysis.recirculated_water,
             analysis.analyst
         ];
-        console.log('Valores a insertar:', values);
-        
+
         const result = await pool.query(query, values);
-        console.log('Resultado de la inserción:', result.rows[0]);
-        
+
         if (!result.rows[0]) {
             throw new Error('No se pudo insertar el análisis');
         }
-        
+
         return result.rows[0];
     } catch (error) {
         console.error('Error en newAnalysis:', error);

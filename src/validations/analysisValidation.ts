@@ -9,8 +9,8 @@ const analysisSchema = z.object({
         .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "La fecha debe tener un formato válido (YYYY-MM-DD)" })
         .transform((str) => new Date(str)),
     time: z.string()
-        .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, { 
-            message: "El formato de hora debe ser HH:mm:ss" 
+        .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/, {
+            message: "El formato de hora debe ser HH:mm:ss"
         }),
     free_chlorine: z.number()
         .min(0, { message: "El cloro libre no puede ser negativo" })
@@ -20,7 +20,7 @@ const analysisSchema = z.object({
         .max(10, { message: "El cloro total no puede exceder 10 mg/L" }),
     cyanuric: z.number()
         .min(0, { message: "El ácido cianúrico no puede ser negativo" })
-        .max(100, { message: "El ácido cianúrico no puede exceder 100 mg/L" }),
+        .max(999, { message: "El ácido cianúrico no puede exceder 999 mg/L" }),
     acidity: z.number()
         .min(0, { message: "La acidez no puede ser negativa" })
         .max(14, { message: "La acidez no puede exceder 14" }),
