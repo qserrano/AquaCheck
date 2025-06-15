@@ -40,7 +40,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   const id = req.params.id; // Ya validado por Zod
   try {
     const userData: UpdateUserInput = req.body; // Ya validado por Zod
-    const updatedUser = await userModel.updateUser(Number(id), userData as User);
+    const updatedUser = await userModel.updateUser(Number(id), userData);
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {

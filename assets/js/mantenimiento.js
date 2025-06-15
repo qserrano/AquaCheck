@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './usuarios.js';
 import {
     handleFormSubmit,
     mostrarTodosAnalisis,
@@ -35,7 +36,7 @@ function mostrarNotificacion(mensaje, tipo) {
     }, 3000);
 }
 
-function navegarA(ruta) {
+function navegarA(ruta, params = {}) {
     const mainContent = document.querySelector('.main-content');
     const userData = JSON.parse(localStorage.getItem('userData'));
 
@@ -51,6 +52,12 @@ function navegarA(ruta) {
             return;
         }
     }
+
+    // Ocultar todas las secciones primero
+    const sections = mainContent.querySelectorAll('.content-section');
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
 
     switch (ruta) {
         case 'ver-todos':
@@ -76,6 +83,13 @@ function navegarA(ruta) {
             break;
         case 'crear-usuario':
             mostrarCrearUsuario();
+            break;
+        case 'listar-usuarios':
+            const listarUsuariosSection = document.getElementById('listar-usuarios');
+            if (listarUsuariosSection) {
+                listarUsuariosSection.style.display = 'block';
+                cargarUsuarios();
+            }
             break;
         case 'nuevo-analisis':
             mainContent.innerHTML = `
@@ -144,6 +158,69 @@ function navegarA(ruta) {
             const form = document.getElementById('nuevoAnalisisForm');
             form.addEventListener('submit', handleFormSubmit);
             break;
+        case 'editar-usuario':
+            const editarUsuarioSection = document.getElementById('editar-usuario');
+            if (editarUsuarioSection) {
+                editarUsuarioSection.style.display = 'block';
+                if (params.userId) {
+                    cargarDatosUsuario(params.userId);
+                }
+            }
+            break;
+    }
+}
+
+// Función para cargar los datos del usuario en el formulario de edición
+async function cargarDatosUsuario(userId) {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || !userData.token) {
+            throw new Error('No hay sesión activa');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${userData.token}`,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error('Error al cargar los datos del usuario');
+        }
+
+        const data = await response.json();
+        console.log('Datos del usuario cargados:', data);
+
+        // Guardar los datos originales del usuario
+        localStorage.setItem('currentUserData', JSON.stringify(data));
+
+        // Llenar el formulario con los datos del usuario
+        document.getElementById('editUserId').value = data.id;
+        document.getElementById('editUsername').value = data.user_username;
+        document.getElementById('editName').value = data.user_name;
+        document.getElementById('editSurname').value = data.user_surname;
+        document.getElementById('editDni').value = data.user_dni;
+        document.getElementById('editEmail').value = data.user_email;
+
+        // Configurar el rol y guardar el valor original
+        const roleSelect = document.getElementById('editRole');
+        roleSelect.value = data.user_role;
+        roleSelect.setAttribute('data-original-role', data.user_role);
+
+        // Limpiar los campos de contraseña
+        document.getElementById('editPassword').value = '';
+        document.getElementById('editConfirmPassword').value = '';
+
+    } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+        mostrarNotificacion('Error al cargar los datos del usuario: ' + error.message, 'error');
     }
 }
 

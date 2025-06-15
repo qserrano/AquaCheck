@@ -17,7 +17,10 @@ const userSchema = z.object({
     .email({ message: "El email debe tener un formato válido" }),
   user_password: z.string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-    .max(100, { message: "La contraseña no puede exceder los 100 caracteres" })
+    .max(100, { message: "La contraseña no puede exceder los 100 caracteres" }),
+  user_role: z.enum(['administrador', 'tecnico', 'usuario'], {
+    errorMap: () => ({ message: "El rol debe ser 'administrador', 'tecnico' o 'usuario'" })
+  })
 });
 
 // Esquema para creación de usuario

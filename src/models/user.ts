@@ -6,7 +6,7 @@ export interface User {
   id?: number;
   user_username: string;
   user_password: string;
-  user_role: string;
+  user_role: 'administrador' | 'tecnico' | 'usuario';
   user_name: string;
   user_surname: string;
   user_dni: string;
@@ -17,7 +17,7 @@ export interface User {
 export const createUser = async (user: CreateUserInput): Promise<User> => {
   const { user_username, user_password, user_name, user_surname, user_dni, user_email } = user;
   const hashedPassword = await hashPassword(user_password);
-  
+
   const result = await pool.query(
     'INSERT INTO users (user_username, user_password, user_role, user_name, user_surname, user_dni, user_email, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING *',
     [user_username, hashedPassword, 'usuario', user_name, user_surname, user_dni, user_email]
@@ -41,9 +41,9 @@ export const getUserById = async (id: number): Promise<User | null> => {
 };
 
 export const updateUser = async (id: number, user: UpdateUserInput): Promise<User | null> => {
-  const { user_username, user_password, user_name, user_surname, user_dni } = user;
+  const { user_username, user_password, user_name, user_surname, user_dni, user_role, user_email } = user;
   const hashedPassword = user_password ? await hashPassword(user_password) : undefined;
-  
+
   const updateFields = [];
   const values = [];
   let paramCount = 1;
@@ -73,6 +73,16 @@ export const updateUser = async (id: number, user: UpdateUserInput): Promise<Use
     values.push(user_dni);
     paramCount++;
   }
+  if (user_role) {
+    updateFields.push(`user_role = $${paramCount}`);
+    values.push(user_role);
+    paramCount++;
+  }
+  if (user_email) {
+    updateFields.push(`user_email = $${paramCount}`);
+    values.push(user_email);
+    paramCount++;
+  }
 
   if (updateFields.length === 0) {
     return null;
@@ -80,7 +90,7 @@ export const updateUser = async (id: number, user: UpdateUserInput): Promise<Use
 
   values.push(id);
   const query = `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`;
-  
+
   const result = await pool.query(query, values);
   return result.rows[0] || null;
 };

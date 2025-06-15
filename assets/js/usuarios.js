@@ -3,7 +3,6 @@ export const API_BASE_URL = 'http://localhost:3000';
 
 export async function cargarUsuario() {
     const userData = JSON.parse(localStorage.getItem('userData'));
-    console.log('Datos del usuario en localStorage:', userData);
 
     if (userData) {
         // Usar directamente los datos del localStorage
@@ -110,6 +109,146 @@ export function mostrarCrearUsuario() {
         });
     }
 }
+
+export async function actualizarUsuario(userId, userDataToUpdate) {
+    try {
+        const sessionData = JSON.parse(localStorage.getItem('userData'));
+        if (!sessionData || !sessionData.token) {
+            throw new Error('No hay sesión activa');
+        }
+
+        console.log('Token de sesión:', sessionData.token);
+        console.log('Actualizando usuario ID:', userId);
+        console.log('Datos a actualizar:', JSON.stringify(userDataToUpdate, null, 2));
+
+        const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionData.token}`,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(userDataToUpdate)
+        });
+
+        console.log('Status de respuesta:', response.status);
+        console.log('Headers de respuesta:', Object.fromEntries(response.headers.entries()));
+
+        const responseData = await response.json();
+        console.log('Datos de respuesta:', JSON.stringify(responseData, null, 2));
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('userData');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Manejar el formato específico de error de la API
+            if (responseData.errors && Array.isArray(responseData.errors)) {
+                const errorMessage = responseData.errors.map(error => {
+                    if (typeof error === 'object') {
+                        return Object.values(error).join(', ');
+                    }
+                    return error;
+                }).join(', ');
+                throw new Error(errorMessage);
+            } else if (responseData.message) {
+                throw new Error(responseData.message);
+            } else {
+                throw new Error('Error al actualizar el usuario');
+            }
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error('Error en actualizarUsuario:', error);
+        throw error;
+    }
+}
+
+// Función para mostrar mensajes de notificación
+function mostrarMensaje(mensaje, tipo) {
+    const mensajeElement = document.getElementById('editSuccessMessage');
+    const errorElement = document.getElementById('editErrorMessage');
+
+    if (tipo === 'success') {
+        mensajeElement.textContent = mensaje;
+        mensajeElement.style.display = 'block';
+        errorElement.style.display = 'none';
+    } else {
+        errorElement.textContent = mensaje;
+        errorElement.style.display = 'block';
+        mensajeElement.style.display = 'none';
+    }
+}
+
+// Función para manejar el envío del formulario de edición
+document.getElementById('editUserForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    try {
+        const userId = document.getElementById('editUserId').value;
+        const formData = new FormData(this);
+
+        // Crear objeto con los datos del formulario con el prefijo 'user_'
+        const userData = {
+            user_username: formData.get('username'),
+            user_name: formData.get('name'),
+            user_surname: formData.get('surname'),
+            user_dni: formData.get('dni'),
+            user_email: formData.get('email'),
+            user_role: formData.get('role')
+        };
+
+        console.log('Valores del formulario:', {
+            userId,
+            username: formData.get('username'),
+            name: formData.get('name'),
+            surname: formData.get('surname'),
+            dni: formData.get('dni'),
+            email: formData.get('email'),
+            role: formData.get('role')
+        });
+
+        // Verificar si el rol ha cambiado
+        const roleSelect = document.getElementById('editRole');
+        const originalRole = roleSelect.getAttribute('data-original-role');
+        const newRole = formData.get('role');
+
+        if (originalRole !== newRole) {
+            console.log('Rol ha cambiado:', { original: originalRole, nuevo: newRole });
+        }
+
+        // Obtener los datos originales
+        const originalData = JSON.parse(localStorage.getItem('currentUserData') || '{}');
+
+        // Crear objeto con todos los campos, manteniendo los valores originales para los no modificados
+        const updateData = {
+            user_username: userData.user_username,
+            user_name: userData.user_name,
+            user_surname: userData.user_surname,
+            user_dni: userData.user_dni,
+            user_email: userData.user_email,
+            user_role: userData.user_role,
+            user_password: originalData.user_password // Mantener la contraseña original
+        };
+
+        console.log('Datos a enviar:', updateData);
+
+        const updatedUser = await actualizarUsuario(userId, updateData);
+        console.log('Usuario actualizado:', updatedUser);
+
+        mostrarMensaje('Usuario editado correctamente', 'success');
+
+        // Recargar la lista de usuarios y mostrar la vista de listado
+        await cargarUsuarios();
+        navegarA('listar-usuarios');
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        mostrarMensaje(error.message, 'error');
+    }
+});
 
 // Exportar la función para uso global
 window.mostrarCrearUsuario = mostrarCrearUsuario;
