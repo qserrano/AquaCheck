@@ -54,7 +54,13 @@
                     <li onclick="navegarA('listar-usuarios')">Listar usuarios</li>
                 </ul>
             </li>
-            <li onclick="navegarA('mantenimiento')">🔧 Mantenimiento</li>
+            <li class="submenu-parent" id="mantenimientoMenu" style="display: none;">
+                🔧 Mantenimiento
+                <ul class="submenu">
+                    <li onclick="navegarA('gestion-piscinas')">Gestión de piscinas</li>
+                    <li onclick="navegarA('configuracion-sistema')">Configuración del sistema</li>
+                </ul>
+            </li>
             <li></li>
             <li onclick="cerrarSesion()">🚪 Cerrar sesión</li>
         </ul>

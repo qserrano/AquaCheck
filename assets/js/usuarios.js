@@ -19,11 +19,17 @@ export async function cargarUsuario() {
 
 export async function crearUsuario(userData) {
     try {
+        const sessionData = JSON.parse(localStorage.getItem('userData'));
+        if (!sessionData || !sessionData.token) {
+            throw new Error('No hay sesión activa');
+        }
+
         const response = await fetch(`${API_BASE_URL}/api/users`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${sessionData.token}`,
+                'Accept': 'application/json'
             },
             body: JSON.stringify(userData)
         });
@@ -190,6 +196,14 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
     try {
         const userId = document.getElementById('editUserId').value;
         const formData = new FormData(this);
+        const newPassword = formData.get('password');
+        const confirmPassword = formData.get('confirmPassword');
+
+        // Validar que las contraseñas coincidan si se proporciona una nueva
+        if (newPassword && newPassword !== confirmPassword) {
+            mostrarMensaje('Las contraseñas no coinciden', 'error');
+            return;
+        }
 
         // Crear objeto con los datos del formulario con el prefijo 'user_'
         const userData = {
@@ -201,6 +215,11 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
             user_role: formData.get('role')
         };
 
+        // Solo incluir la contraseña si se proporciona una nueva
+        if (newPassword) {
+            userData.user_password = newPassword;
+        }
+
         console.log('Valores del formulario:', {
             userId,
             username: formData.get('username'),
@@ -208,7 +227,8 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
             surname: formData.get('surname'),
             dni: formData.get('dni'),
             email: formData.get('email'),
-            role: formData.get('role')
+            role: formData.get('role'),
+            hasNewPassword: !!newPassword
         });
 
         // Verificar si el rol ha cambiado
@@ -220,23 +240,7 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
             console.log('Rol ha cambiado:', { original: originalRole, nuevo: newRole });
         }
 
-        // Obtener los datos originales
-        const originalData = JSON.parse(localStorage.getItem('currentUserData') || '{}');
-
-        // Crear objeto con todos los campos, manteniendo los valores originales para los no modificados
-        const updateData = {
-            user_username: userData.user_username,
-            user_name: userData.user_name,
-            user_surname: userData.user_surname,
-            user_dni: userData.user_dni,
-            user_email: userData.user_email,
-            user_role: userData.user_role,
-            user_password: originalData.user_password // Mantener la contraseña original
-        };
-
-        console.log('Datos a enviar:', updateData);
-
-        const updatedUser = await actualizarUsuario(userId, updateData);
+        const updatedUser = await actualizarUsuario(userId, userData);
         console.log('Usuario actualizado:', updatedUser);
 
         mostrarMensaje('Usuario editado correctamente', 'success');

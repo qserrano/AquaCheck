@@ -24,6 +24,7 @@ window.navegarA = navegarA;
 window.cerrarSesion = cerrarSesion;
 window.cargarUsuarios = cargarUsuarios;
 window.editarUsuario = editarUsuario;
+window.eliminarUsuario = eliminarUsuario;
 
 // Variables globales
 let allUsers = [];
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (userData.role === 'administrador') {
             usuariosMenu.style.display = 'block';
+            mantenimientoMenu.style.display = 'block';
         }
     } else {
         console.log('No hay datos de usuario en localStorage');
