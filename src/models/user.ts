@@ -26,8 +26,15 @@ export const createUser = async (user: CreateUserInput): Promise<User> => {
 };
 
 export const getUserByUsername = async (username: string): Promise<User | null> => {
-  const result = await pool.query('SELECT * FROM users WHERE user_username = $1', [username]);
-  return result.rows[0] || null;
+  try {
+    console.log('Buscando usuario:', username);
+    const result = await pool.query('SELECT * FROM users WHERE user_username = $1', [username]);
+    console.log('Resultado de la consulta:', result.rows);
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error en getUserByUsername:', error);
+    throw error; // Propaga error para que el controlador lo capture y loguee
+  }
 };
 
 export const getUsers = async (): Promise<User[]> => {
