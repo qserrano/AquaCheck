@@ -23,7 +23,7 @@ SET row_security = off;
 CREATE TYPE public.user_role_type AS ENUM (
     'administrador',
     'tecnico',
-    'socorrista'
+    'usuario'
 );
 
 
@@ -288,7 +288,7 @@ ALTER TABLE ONLY public.users
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
 --
 
-GRANT USAGE ON SCHEMA public TO aquacheck_api;
+GRANT USAGE ON SCHEMA public TO aquacheck_user;
 
 
 --
@@ -296,7 +296,14 @@ GRANT USAGE ON SCHEMA public TO aquacheck_api;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.analysis TO "test-user";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.analysis TO aquacheck_api;
+GRANT SELECT ON TABLE public.analysis TO aquacheck_user;
+
+
+--
+-- Name: SEQUENCE analysis_id_analysis_seq; Type: ACL; Schema: public; Owner: quiquesb
+--
+
+GRANT SELECT ON SEQUENCE public.analysis_id_analysis_seq TO aquacheck_user;
 
 
 --
@@ -304,6 +311,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.analysis TO aquacheck_api;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.migrations TO "test-user";
+GRANT SELECT ON TABLE public.migrations TO aquacheck_user;
+
+
+--
+-- Name: SEQUENCE migrations_id_seq; Type: ACL; Schema: public; Owner: quiquesb
+--
+
+GRANT SELECT ON SEQUENCE public.migrations_id_seq TO aquacheck_user;
 
 
 --
@@ -311,14 +326,28 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.migrations TO "test-user";
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO "test-user";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO aquacheck_api;
+GRANT SELECT ON TABLE public.users TO aquacheck_user;
+
+
+--
+-- Name: SEQUENCE users_id_seq; Type: ACL; Schema: public; Owner: quiquesb
+--
+
+GRANT SELECT ON SEQUENCE public.users_id_seq TO aquacheck_user;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: quiquesb
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE quiquesb IN SCHEMA public GRANT SELECT ON SEQUENCES TO aquacheck_user;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: quiquesb
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE quiquesb IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO aquacheck_api;
+ALTER DEFAULT PRIVILEGES FOR ROLE quiquesb IN SCHEMA public GRANT SELECT ON TABLES TO aquacheck_user;
 
 
 --

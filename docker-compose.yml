@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: aquacheck-db
+    environment:
+      POSTGRES_DB: aquacheck
+      POSTGRES_USER: aquacheck_user
+      POSTGRES_PASSWORD: aquacheck_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./aquacheck_db.sql:/docker-entrypoint-initdb.d/aquacheck_db.sql
+    networks:
+      - aquacheck-network
+
+  # Aplicación Node.js
+  app:
+    build: .
+    container_name: aquacheck-app
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: aquacheck_user
+      DB_PASSWORD: aquacheck_password
+      DB_NAME: aquacheck
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - aquacheck-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
+networks:
+  aquacheck-network:
+    driver: bridge
