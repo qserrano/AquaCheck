@@ -9,13 +9,38 @@ AquaCheck es una aplicación web para la gestión y análisis de calidad del agu
 - **Autenticación**: JWT (JSON Web Tokens)
 - **Frontend**: HTML, CSS, JavaScript vanilla
 
-## Requisitos Previos
+## Instalación
+
+### 🐳 Opción 1: Docker (Recomendado para usuarios)
+**La forma más fácil y rápida de ejecutar AquaCheck.**
+
+Ver [README-Docker.md](README-Docker.md) para instrucciones completas con Docker.
+
+**Ventajas:**
+- ✅ No requiere instalar Node.js ni PostgreSQL
+- ✅ Configuración automática
+- ✅ Funciona en cualquier sistema con Docker
+- ✅ Incluye datos de prueba listos para usar
+
+**Comando rápido:**
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd AquaCheck
+docker-compose up -d
+```
+
+### ⚙️ Opción 2: Instalación Manual (Para desarrolladores)
+**Para desarrollo local o cuando necesites más control.**
+
+Sigue las instrucciones de abajo para instalación manual.
+
+## Requisitos Previos (Solo para instalación manual)
 - Node.js (versión 16 o superior)
 - npm o yarn
 - PostgreSQL (versión 15 o superior)
 - Git
 
-## Instalación y Configuración
+## Instalación y Configuración Manual
 
 ### 1. Clonar el Repositorio
 ```bash
@@ -114,7 +139,9 @@ AquaCheck/
 ├── assets/             # Archivos estáticos (CSS, JS, imágenes)
 ├── docs/               # Documentación
 ├── aquacheck.sql       # Dump de la base de datos
-└── docker-compose.yml  # Configuración de Docker
+├── docker-compose.yml  # Configuración de Docker
+├── Dockerfile          # Configuración de Docker
+└── README-Docker.md    # Guía de Docker
 ```
 
 ## API Endpoints
