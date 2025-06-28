@@ -126,11 +126,11 @@ async function mostrarTodosAnalisis(contenedor) {
                                 <th>Hora</th>
                                 <th>Cloro Libre (ppm)</th>
                                 <th>Cloro Total (ppm)</th>
-                                <th>Ácido Cianúrico (ppm)</th>
+                                <th>CyA (ppm)</th>
                                 <th>pH</th>
-                                <th>Turbidez (NTU)</th>
-                                <th>Agua Renovada (m3)</th>
-                                <th>Agua Recirculada (m3)</th>
+                                <th>Turb. (NTU)</th>
+                                <th>Agua Renov. (m3)</th>
+                                <th>Agua Recirc. (m3)</th>
                                 <th>Analista</th>
                             </tr>
                         </thead>
@@ -272,11 +272,11 @@ async function mostrarAnalisisPorPiscina(contenedor) {
                                     <th>Hora</th>
                                     <th>Cloro Libre (ppm)</th>
                                     <th>Cloro Total (ppm)</th>
-                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>CyA (ppm)</th>
                                     <th>pH</th>
-                                    <th>Turbidez (NTU)</th>
-                                    <th>Agua Renovada (m3)</th>
-                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Turb. (NTU)</th>
+                                    <th>Agua Renov. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Analista</th>
                                 </tr>
                             </thead>
@@ -431,11 +431,11 @@ async function mostrarAnalisisPorAnalista(contenedor) {
                                     <th>Hora</th>
                                     <th>Cloro Libre (ppm)</th>
                                     <th>Cloro Total (ppm)</th>
-                                    <th>Ácido Cianúrico (ppm)</th>
+                                    <th>CyA (ppm)</th>
                                     <th>pH</th>
-                                    <th>Turbidez (NTU)</th>
-                                    <th>Agua Renovada (m3)</th>
-                                    <th>Agua Recirculada (m3)</th>
+                                    <th>Turb. (NTU)</th>
+                                    <th>Agua Renov. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Analista</th>
                                 </tr>
                             </thead>

@@ -41,7 +41,7 @@ function generarPDFPorPiscina(poolName, analisis) {
                             'pH',
                             'Turb. (NTU)',
                             'Agua Renov. (m3)',
-                            'Agua Recir. (m3)',
+                            'Agua Recirc. (m3)',
                             'Analista',
                             'Estado'
                         ],
@@ -135,7 +135,7 @@ function generarPDFPorAnalista(analystName, analisis) {
                             'pH',
                             'Turb. (NTU)',
                             'Agua Renov. (m3)',
-                            'Agua Recir. (m3)',
+                            'Agua Recirc. (m3)',
                             'Estado'
                         ],
                         ...analisis.map(a => [
@@ -228,7 +228,7 @@ function generarPDFPorFechas(fechaInicio, fechaFin, analisis) {
                             'pH',
                             'Turb. (NTU)',
                             'Agua Renov. (m3)',
-                            'Agua Recir. (m3)',
+                            'Agua Recirc. (m3)',
                             'Analista',
                             'Estado'
                         ],
@@ -336,7 +336,7 @@ function generarPDFPersonalizado(pool, analyst, fechaInicio, fechaFin, analisis)
                             'pH',
                             'Turb. (NTU)',
                             'Agua Renov. (m3)',
-                            'Agua Recir. (m3)',
+                            'Agua Recirc. (m3)',
                             'Analista',
                             'Estado'
                         ],
@@ -446,7 +446,7 @@ async function mostrarInformesPorPiscina(contenedor) {
                                     <th>pH</th>
                                     <th>Turb. (NTU)</th>
                                     <th>Agua Renov. (m3)</th>
-                                    <th>Agua Recir. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Analista</th>
                                     <th>Estado</th>
                                 </tr>
@@ -620,7 +620,7 @@ async function mostrarInformesPorAnalista(contenedor) {
                                     <th>pH</th>
                                     <th>Turb. (NTU)</th>
                                     <th>Agua Renov. (m3)</th>
-                                    <th>Agua Recir. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Estado</th>
                                 </tr>
                             </thead>
@@ -777,7 +777,7 @@ async function mostrarInformesPorFechas(contenedor) {
                                     <th>pH</th>
                                     <th>Turb. (NTU)</th>
                                     <th>Agua Renov. (m3)</th>
-                                    <th>Agua Recir. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Analista</th>
                                     <th>Estado</th>
                                 </tr>
@@ -977,7 +977,7 @@ async function mostrarInformesPersonalizados(contenedor) {
                                     <th>pH</th>
                                     <th>Turb. (NTU)</th>
                                     <th>Agua Renov. (m3)</th>
-                                    <th>Agua Recir. (m3)</th>
+                                    <th>Agua Recirc. (m3)</th>
                                     <th>Analista</th>
                                     <th>Estado</th>
                                 </tr>

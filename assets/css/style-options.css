@@ -264,6 +264,67 @@ body {
     border-bottom: 1px solid #eee;
 }
 
+/* Ajustes específicos para los anchos de columnas con nuevos encabezados */
+.analisis-table th:nth-child(1), /* Piscina */
+.analisis-table td:nth-child(1) {
+    width: 12%;
+}
+
+.analisis-table th:nth-child(2), /* Fecha */
+.analisis-table td:nth-child(2) {
+    width: 10%;
+}
+
+.analisis-table th:nth-child(3), /* Hora */
+.analisis-table td:nth-child(3) {
+    width: 8%;
+}
+
+.analisis-table th:nth-child(4), /* Cloro Libre */
+.analisis-table td:nth-child(4) {
+    width: 12%;
+}
+
+.analisis-table th:nth-child(5), /* Cloro Total */
+.analisis-table td:nth-child(5) {
+    width: 12%;
+}
+
+.analisis-table th:nth-child(6), /* CyA */
+.analisis-table td:nth-child(6) {
+    width: 8%;
+}
+
+.analisis-table th:nth-child(7), /* pH */
+.analisis-table td:nth-child(7) {
+    width: 6%;
+}
+
+.analisis-table th:nth-child(8), /* Turb. */
+.analisis-table td:nth-child(8) {
+    width: 8%;
+}
+
+.analisis-table th:nth-child(9), /* Agua Renov. */
+.analisis-table td:nth-child(9) {
+    width: 12%;
+}
+
+.analisis-table th:nth-child(10), /* Agua Recirc. */
+.analisis-table td:nth-child(10) {
+    width: 12%;
+}
+
+.analisis-table th:nth-child(11), /* Analista */
+.analisis-table td:nth-child(11) {
+    width: 10%;
+}
+
+.analisis-table th:nth-child(12), /* Estado (solo en informes) */
+.analisis-table td:nth-child(12) {
+    width: 8%;
+}
+
 .analisis-table tbody tr:hover {
     background-color: #f8f9fa;
 }
