@@ -97,13 +97,14 @@ La base de datos se configura automáticamente con:
 - **Contraseña**: aquacheck_password
 - **Puerto**: 5433 (externo) / 5432 (interno)
 
-El archivo `aquacheck_new.sql` se ejecuta automáticamente al iniciar la base de datos por primera vez.
+El archivo `aquacheck_docker.sql` se ejecuta automáticamente al iniciar la base de datos por primera vez.
 
 ## Credenciales de Prueba
 
-- **Administrador**: admin / admin1234
-- **Técnico**: tecnic / tecnic1234
-- **Usuario**: user / user1234
+- **Administrador**: admin / (consultar al desarrollador)
+- **Técnico**: tecnic / (consultar al desarrollador)
+- **Usuario**: user / (consultar al desarrollador)
+- **Test**: test / (consultar al desarrollador)
 
 ## Solución de Problemas
 
@@ -152,4 +153,4 @@ Las variables de entorno están configuradas en el `docker-compose.yml`:
 - `Dockerfile`: Configuración de la imagen de la aplicación
 - `docker-compose.yml`: Orquestación de servicios
 - `.dockerignore`: Archivos excluidos del contexto de Docker
-- `aquacheck_db.sql`: Script de inicialización de la base de datos 
+- `aquacheck_docker.sql`: Script de inicialización de la base de datos 

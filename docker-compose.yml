@@ -13,7 +13,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./aquacheck_db.sql:/docker-entrypoint-initdb.d/aquacheck_db.sql
+      - ./aquacheck_docker.sql:/docker-entrypoint-initdb.d/aquacheck_docker.sql
     networks:
       - aquacheck-network
 
