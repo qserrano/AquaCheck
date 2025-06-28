@@ -109,7 +109,12 @@ async function handleFormSubmit(event) {
 
 async function mostrarTodosAnalisis(contenedor) {
     try {
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el análisis sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'todos-analisis-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Análisis Registrados</h2>
                 <div class="table-container">
@@ -139,6 +144,15 @@ async function mostrarTodosAnalisis(contenedor) {
             </div>
         `;
 
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('todos-analisis-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
         const userData = JSON.parse(localStorage.getItem('userData'));
         if (!userData || !userData.token) {
             throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
@@ -163,7 +177,8 @@ async function mostrarTodosAnalisis(contenedor) {
         const data = await response.json();
         const analisis = data.success && data.data ? data.data : [];
 
-        const tbody = document.getElementById('analisisTableBody');
+        // Buscar el tbody dentro del contenedor específico
+        const tbody = tempContainer.querySelector('#analisisTableBody');
         
         if (analisis.length === 0) {
             tbody.innerHTML = `
@@ -192,12 +207,16 @@ async function mostrarTodosAnalisis(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los análisis</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('todos-analisis-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los análisis</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -228,7 +247,12 @@ async function mostrarAnalisisPorPiscina(contenedor) {
         const analisis = data.success && data.data ? data.data : [];
         const piscinas = [...new Set(analisis.map(a => a.pool))].sort();
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el análisis sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'analisis-por-piscina-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Análisis por Piscina</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -264,11 +288,21 @@ async function mostrarAnalisisPorPiscina(contenedor) {
             </div>
         `;
 
-        const poolSelect = document.getElementById('poolSelect');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('analisis-por-piscina-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const poolSelect = tempContainer.querySelector('#poolSelect');
         poolSelect.addEventListener('change', async (e) => {
             const selectedPool = e.target.value;
-            const tablaAnalisis = document.getElementById('tablaAnalisis');
-            const tbody = document.getElementById('analisisTableBody');
+            const tablaAnalisis = tempContainer.querySelector('#tablaAnalisis');
+            const tbody = tempContainer.querySelector('#analisisTableBody');
 
             if (!selectedPool) {
                 tablaAnalisis.style.display = 'none';
@@ -332,12 +366,16 @@ async function mostrarAnalisisPorPiscina(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los análisis</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('analisis-por-piscina-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los análisis</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -368,7 +406,12 @@ async function mostrarAnalisisPorAnalista(contenedor) {
         const analisis = data.success && data.data ? data.data : [];
         const analistas = [...new Set(analisis.map(a => a.analyst))].sort();
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el análisis sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'analisis-por-analista-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Análisis por Analista</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -404,11 +447,21 @@ async function mostrarAnalisisPorAnalista(contenedor) {
             </div>
         `;
 
-        const analystSelect = document.getElementById('analystSelect');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('analisis-por-analista-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const analystSelect = tempContainer.querySelector('#analystSelect');
         analystSelect.addEventListener('change', async (e) => {
             const selectedAnalyst = e.target.value;
-            const tablaAnalisis = document.getElementById('tablaAnalisis');
-            const tbody = document.getElementById('analisisTableBody');
+            const tablaAnalisis = tempContainer.querySelector('#tablaAnalisis');
+            const tbody = tempContainer.querySelector('#analisisTableBody');
 
             if (!selectedAnalyst) {
                 tablaAnalisis.style.display = 'none';
@@ -472,12 +525,16 @@ async function mostrarAnalisisPorAnalista(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los análisis</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('analisis-por-analista-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los análisis</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 

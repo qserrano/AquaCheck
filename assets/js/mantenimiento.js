@@ -92,7 +92,12 @@ function navegarA(ruta, params = {}) {
             }
             break;
         case 'nuevo-analisis':
-            mainContent.innerHTML = `
+            // Crear un contenedor temporal para el formulario sin reemplazar todo el contenido
+            const tempContainer = document.createElement('div');
+            tempContainer.id = 'nuevo-analisis-container';
+            tempContainer.className = 'content-section';
+            tempContainer.style.display = 'block';
+            tempContainer.innerHTML = `
                 <div class="form-container">
                     <h2>Nuevo Análisis de Agua</h2>
                     <form id="nuevoAnalisisForm" class="analisis-form">
@@ -153,6 +158,15 @@ function navegarA(ruta, params = {}) {
                     </form>
                 </div>
             `;
+
+            // Remover el contenedor temporal anterior si existe
+            const existingContainer = document.getElementById('nuevo-analisis-container');
+            if (existingContainer) {
+                existingContainer.remove();
+            }
+
+            // Agregar el nuevo contenedor al mainContent
+            mainContent.appendChild(tempContainer);
 
             // Agregar el event listener para el formulario
             const form = document.getElementById('nuevoAnalisisForm');

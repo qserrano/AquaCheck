@@ -417,7 +417,12 @@ async function mostrarInformesPorPiscina(contenedor) {
         const analisis = data.success && data.data ? data.data : [];
         const piscinas = [...new Set(analisis.map(a => a.pool))].sort();
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el informe sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'informes-por-piscina-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Generar Informes por Piscina</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -462,12 +467,22 @@ async function mostrarInformesPorPiscina(contenedor) {
             </div>
         `;
 
-        const poolSelect = document.getElementById('poolSelectInforme');
-        const vistaPrevia = document.getElementById('vistaPrevia');
-        const tbody = document.getElementById('analisisTableBody');
-        const totalAnalisis = document.getElementById('totalAnalisis');
-        const periodoAnalisis = document.getElementById('periodoAnalisis');
-        const generarPDFBtn = document.getElementById('generarPDF');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('informes-por-piscina-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const poolSelect = tempContainer.querySelector('#poolSelectInforme');
+        const vistaPrevia = tempContainer.querySelector('#vistaPrevia');
+        const tbody = tempContainer.querySelector('#analisisTableBody');
+        const totalAnalisis = tempContainer.querySelector('#totalAnalisis');
+        const periodoAnalisis = tempContainer.querySelector('#periodoAnalisis');
+        const generarPDFBtn = tempContainer.querySelector('#generarPDF');
 
         let analisisActual = [];
 
@@ -535,12 +550,16 @@ async function mostrarInformesPorPiscina(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los informes</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('informes-por-piscina-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los informes</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -571,7 +590,12 @@ async function mostrarInformesPorAnalista(contenedor) {
         const analisis = data.success && data.data ? data.data : [];
         const analistas = [...new Set(analisis.map(a => a.analyst))].sort();
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el informe sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'informes-por-analista-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Generar Informes por Analista</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -616,12 +640,22 @@ async function mostrarInformesPorAnalista(contenedor) {
             </div>
         `;
 
-        const analystSelect = document.getElementById('analystSelectInforme');
-        const vistaPrevia = document.getElementById('vistaPrevia');
-        const tbody = document.getElementById('analisisTableBody');
-        const totalAnalisis = document.getElementById('totalAnalisis');
-        const periodoAnalisis = document.getElementById('periodoAnalisis');
-        const generarPDFBtn = document.getElementById('generarPDF');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('informes-por-analista-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const analystSelect = tempContainer.querySelector('#analystSelectInforme');
+        const vistaPrevia = tempContainer.querySelector('#vistaPrevia');
+        const tbody = tempContainer.querySelector('#analisisTableBody');
+        const totalAnalisis = tempContainer.querySelector('#totalAnalisis');
+        const periodoAnalisis = tempContainer.querySelector('#periodoAnalisis');
+        const generarPDFBtn = tempContainer.querySelector('#generarPDF');
 
         let analisisActual = [];
 
@@ -689,12 +723,16 @@ async function mostrarInformesPorAnalista(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los informes</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('informes-por-analista-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los informes</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -705,7 +743,12 @@ async function mostrarInformesPorFechas(contenedor) {
             throw new Error('No hay sesión activa. Por favor, inicie sesión nuevamente.');
         }
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el informe sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'informes-por-fechas-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Generar Informes por Rango de Fechas</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -755,14 +798,24 @@ async function mostrarInformesPorFechas(contenedor) {
             </div>
         `;
 
-        const fechaInicio = document.getElementById('fechaInicio');
-        const fechaFin = document.getElementById('fechaFin');
-        const buscarBtn = document.getElementById('buscarAnalisis');
-        const vistaPrevia = document.getElementById('vistaPrevia');
-        const tbody = document.getElementById('analisisTableBody');
-        const totalAnalisis = document.getElementById('totalAnalisis');
-        const periodoAnalisis = document.getElementById('periodoAnalisis');
-        const generarPDFBtn = document.getElementById('generarPDF');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('informes-por-fechas-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const fechaInicio = tempContainer.querySelector('#fechaInicio');
+        const fechaFin = tempContainer.querySelector('#fechaFin');
+        const buscarBtn = tempContainer.querySelector('#buscarAnalisis');
+        const vistaPrevia = tempContainer.querySelector('#vistaPrevia');
+        const tbody = tempContainer.querySelector('#analisisTableBody');
+        const totalAnalisis = tempContainer.querySelector('#totalAnalisis');
+        const periodoAnalisis = tempContainer.querySelector('#periodoAnalisis');
+        const generarPDFBtn = tempContainer.querySelector('#generarPDF');
 
         let analisisActual = [];
 
@@ -834,12 +887,16 @@ async function mostrarInformesPorFechas(contenedor) {
 
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los informes</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('informes-por-fechas-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los informes</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -872,7 +929,12 @@ async function mostrarInformesPersonalizados(contenedor) {
         const piscinas = [...new Set(analisis.map(a => a.pool))].sort();
         const analistas = [...new Set(analisis.map(a => a.analyst))].sort();
 
-        contenedor.innerHTML = `
+        // Crear un contenedor temporal para el informe sin reemplazar todo el contenido
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'informes-personalizados-container';
+        tempContainer.className = 'content-section';
+        tempContainer.style.display = 'block';
+        tempContainer.innerHTML = `
             <div class="analisis-container">
                 <h2>Generar Informes Personalizados</h2>
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -936,16 +998,26 @@ async function mostrarInformesPersonalizados(contenedor) {
             </div>
         `;
 
-        const poolSelect = document.getElementById('poolSelectPersonalizado');
-        const analystSelect = document.getElementById('analystSelectPersonalizado');
-        const fechaInicio = document.getElementById('fechaInicioPersonalizado');
-        const fechaFin = document.getElementById('fechaFinPersonalizado');
-        const buscarBtn = document.getElementById('buscarAnalisisPersonalizado');
-        const vistaPrevia = document.getElementById('vistaPreviaPersonalizado');
-        const tbody = document.getElementById('analisisTableBodyPersonalizado');
-        const totalAnalisis = document.getElementById('totalAnalisisPersonalizado');
-        const periodoAnalisis = document.getElementById('periodoAnalisisPersonalizado');
-        const generarPDFBtn = document.getElementById('generarPDFPersonalizado');
+        // Remover el contenedor temporal anterior si existe
+        const existingContainer = document.getElementById('informes-personalizados-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+
+        // Agregar el nuevo contenedor al mainContent
+        contenedor.appendChild(tempContainer);
+
+        // Buscar elementos dentro del contenedor específico
+        const poolSelect = tempContainer.querySelector('#poolSelectPersonalizado');
+        const analystSelect = tempContainer.querySelector('#analystSelectPersonalizado');
+        const fechaInicio = tempContainer.querySelector('#fechaInicioPersonalizado');
+        const fechaFin = tempContainer.querySelector('#fechaFinPersonalizado');
+        const buscarBtn = tempContainer.querySelector('#buscarAnalisisPersonalizado');
+        const vistaPrevia = tempContainer.querySelector('#vistaPreviaPersonalizado');
+        const tbody = tempContainer.querySelector('#analisisTableBodyPersonalizado');
+        const totalAnalisis = tempContainer.querySelector('#totalAnalisisPersonalizado');
+        const periodoAnalisis = tempContainer.querySelector('#periodoAnalisisPersonalizado');
+        const generarPDFBtn = tempContainer.querySelector('#generarPDFPersonalizado');
 
         let analisisActual = [];
 
@@ -1036,12 +1108,17 @@ async function mostrarInformesPersonalizados(contenedor) {
         });
 
     } catch (error) {
-        contenedor.innerHTML = `
-            <div class="error-container">
-                <h3>Error al cargar los informes</h3>
-                <p>${error.message}</p>
-            </div>
-        `;
+        console.error('Error:', error);
+        // Si hay un error, mostrar en el contenedor temporal
+        const tempContainer = document.getElementById('informes-personalizados-container');
+        if (tempContainer) {
+            tempContainer.innerHTML = `
+                <div class="error-container">
+                    <h3>Error al cargar los informes</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
