@@ -25,6 +25,15 @@ export const getAnalysis = async (): Promise<Analysis[]> => {
     return result.rows;
 };
 
+export const getAnalysisById = async (id: number): Promise<Analysis | null> => {
+    const query = `
+        SELECT * FROM analysis
+        WHERE id_analysis = $1
+    `;
+    const result = await pool.query(query, [id]);
+    return result.rows[0] || null;
+};
+
 export const newAnalysis = async (analysis: Omit<Analysis, 'id_analysis' | 'created_at'>): Promise<Analysis> => {
     try {
 

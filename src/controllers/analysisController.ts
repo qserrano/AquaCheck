@@ -26,6 +26,28 @@ export const getAnalysis = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+export const getAnalysisById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const analysis = await analysisModel.getAnalysisById(Number(id));
+        
+        if (!analysis) {
+            res.status(404).json({
+                success: false,
+                message: 'Análisis no encontrado'
+            });
+            return;
+        }
+        
+        res.status(200).json({
+            success: true,
+            data: analysis
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const createAnalysis = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         // Verificar conexión a la base de datos
