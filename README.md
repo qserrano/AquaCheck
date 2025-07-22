@@ -178,7 +178,7 @@ AquaCheck/
 - Asegurar que la base de datos existe y el usuario tiene permisos
 
 ### Error de Autenticación JWT
-- Verificar que el `JWT_SECRET` en el archivo `.env` sea exactamente: `!78183W344qh9Gq5qooq`
+- Verificar que el `JWT_SECRET` en el archivo `.env`
 - Comprobar que el token no haya expirado
 
 ### Error de Compilación TypeScript
